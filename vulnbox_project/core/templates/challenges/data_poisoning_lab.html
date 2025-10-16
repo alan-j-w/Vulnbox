@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Data Poisoning Lab{% endblock %}
+
+{% block extra_head %}
+<style>
+    .ui-panel { background: rgba(20, 20, 25, 0.6); border: 1px solid rgba(57, 255, 20, 0.2); backdrop-filter: blur(8px); border-radius: 12px; }
+    .positive-label { color: #22c55e; border-color: #22c55e; }
+    .negative-label { color: #ef4444; border-color: #ef4444; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-4xl mx-auto text-white">
+    <div class="ui-panel p-8">
+        <h2 class="text-3xl font-bold text-center text-green-400 mb-4">Sentiment Model Trainer</h2>
+        <p class="text-gray-400 mb-6 text-center">Our new AI learns from user-submitted reviews. Add examples to the training dataset to help it learn. Your goal is to poison the model so that it misclassifies a clearly positive review.</p>
+
+        <!-- Messages Display -->
+        {% if messages %}
+            <div class="mb-6">
+            {% for message in messages %}
+                <div class="{% if message.tags == 'success' %}bg-green-500/20 text-green-300{% else %}bg-red-500/20 text-red-300{% endif %} p-3 rounded-md text-sm" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Form for adding data -->
+        <form method="POST" class="mb-8 p-6 border border-gray-700 rounded-lg">
+            {% csrf_token %}
+            <h3 class="text-xl font-bold text-gray-200 mb-4">Add a Training Example:</h3>
+            <div class="mb-4">
+                <label for="review_text" class="block text-sm font-medium text-gray-400 mb-2">Review Text:</label>
+                <input type="text" name="review_text" required class="w-full bg-gray-900/50 border-2 border-green-700 rounded-md p-2 text-white focus:outline-none focus:ring-2 focus:ring-green-400">
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-400 mb-2">Label:</label>
+                <select name="label" class="w-full bg-gray-900/50 border-2 border-green-700 rounded-md p-2 text-white focus:outline-none focus:ring-2 focus:ring-green-400">
+                    <option value="Positive">Positive</option>
+                    <option value="Negative">Negative</option>
+                </select>
+            </div>
+            <button type="submit" name="action" value="add_data" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                Add to Dataset
+            </button>
+        </form>
+
+        <!-- Training Data Display -->
+        <div class="mb-8">
+            <h3 class="text-xl font-bold text-gray-200 mb-4">Current Training Dataset:</h3>
+            <div class="space-y-2 max-h-40 overflow-y-auto p-4 bg-black/30 rounded-md">
+                {% for item in training_data %}
+                    <p class="font-mono text-sm">"<span class="text-gray-300">{{ item.text }}</span>" -> <span class="font-bold {% if item.label == 'Positive' %}positive-label{% else %}negative-label{% endif %}">{{ item.label }}</span></p>
+                {% empty %}
+                    <p class="text-gray-500 italic">Dataset is empty.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Form for testing the model -->
+        <form method="POST">
+            {% csrf_token %}
+            <p class="text-center text-gray-300 mb-4">Once you believe the model is poisoned, test its prediction on the following review:</p>
+            <p class="text-center font-mono p-4 bg-gray-900/50 border border-dashed border-gray-600 rounded-md my-4">"This movie was an absolute joy!"</p>
+            <button type="submit" name="action" value="test_model" class="w-full bg-green-600 text-black font-bold py-3 px-6 rounded-lg hover:bg-green-500 transition-colors text-lg">
+                Test the Model
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

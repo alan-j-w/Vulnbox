@@ -1,0 +1,357 @@
+{% extends 'base.html' %}
+
+{% block title %}SQL Injection Course{% endblock %}
+
+{% block content %}
+
+<style>
+    /* --- PROFESSIONAL LAYOUT WITH DASHBOARD COLOR THEME --- */
+    
+    :root {
+        --primary-green: #39FF14;
+        --accent-mint: #6AFFAF;
+        --background-main: #0A0A0A;
+        --background-card: rgba(10, 10, 10, 0.6);
+        --text-bright: #F9FAFB;
+        --text-muted: #9CA3AF;
+        --text-dark-on-mint: #111827;
+        --border-color: rgba(57, 255, 20, 0.2);
+        --sql-keyword: #569CD6; /* Blue for SQL keywords */
+        --sql-string: #CE9178;  /* Orange for strings */
+        --sql-comment: #6A9955; /* Green for comments */
+        --sql-danger: #F87171;   /* Red for injected part */
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--background-main);
+    }
+    
+    .course-layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 3rem;
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+
+    .task-sidebar {
+        position: sticky;
+        top: 100px;
+        align-self: start;
+    }
+
+    .task-sidebar ol {
+        list-style: none;
+        padding-left: 1.5rem;
+        position: relative;
+        border-left: 2px solid var(--border-color);
+    }
+    
+    .task-item a {
+        display: block;
+        position: relative;
+        padding: 1rem 0 1rem 2.5rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .task-item a::before {
+        content: counter(task-counter);
+        counter-increment: task-counter;
+        position: absolute;
+        left: -1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background-color: var(--background-main);
+        border: 2px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        transition: border-color 0.2s, color 0.2s;
+    }
+
+    .task-item a:hover { color: var(--text-bright); }
+    
+    .task-item a.active {
+        color: var(--primary-green);
+        font-weight: bold;
+    }
+    .task-item a.active::before {
+        border-color: var(--primary-green);
+        color: var(--primary-green);
+    }
+
+    .content-main h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-green);
+        margin-bottom: 0.5rem;
+    }
+    .content-main .subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 3rem; }
+
+    .module-section { margin-bottom: 3rem; padding-top: 2rem; }
+    .module-section h2 {
+        font-size: 1.8rem; font-weight: 600; color: var(--text-bright);
+        margin-bottom: 1.5rem;
+    }
+     .module-section h3 {
+        font-size: 1.3rem; font-weight: 600; color: var(--text-bright);
+        margin-top: 2rem; margin-bottom: 1rem;
+    }
+    .module-section p, .module-section li { font-size: 1rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 1rem; }
+    .module-section code {
+        background-color: var(--background-card); border: 1px solid var(--border-color);
+        color: #F3F4F6; padding: 0.2rem 0.5rem; border-radius: 4px;
+        font-family: 'Roboto Mono', monospace;
+    }
+    .module-section ul { list-style-type: disc; padding-left: 1.5rem; }
+    .module-section pre { margin: 1rem 0; background-color: var(--background-card); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); white-space: pre-wrap; font-family: 'Roboto Mono', monospace;}
+
+
+    .info-card {
+        background-color: var(--background-card);
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        display: flex;
+        gap: 1.5rem;
+        align-items: flex-start;
+    }
+    .info-card .icon { color: var(--text-muted); flex-shrink: 0; }
+    .info-card h3 { font-size: 1.1rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.5rem; }
+
+    .challenge-button {
+        background-color: var(--accent-mint);
+        color: var(--text-dark-on-mint);
+        font-size: 1rem; padding: 0.7rem 1.5rem; border-radius: 8px;
+        transition: background-color 0.3s ease; text-decoration: none; display: inline-block;
+        margin: 0.5rem; font-weight: bold;
+    }
+    .challenge-button:hover { background-color: #8BFFC8; }
+
+    /* ✅ NEW: Interactive Code Block Styling */
+    .interactive-sql {
+        background-color: #1E1E1E; /* Dark editor background */
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+    }
+    .interactive-sql label {
+        display: block;
+        font-family: 'Roboto Mono', monospace;
+        color: var(--text-muted);
+        margin-bottom: 0.5rem;
+    }
+    .interactive-sql input {
+        width: 100%;
+        background-color: #252526;
+        border: 1px solid #37373D;
+        color: var(--text-bright);
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-family: 'Roboto Mono', monospace;
+        margin-bottom: 1rem;
+    }
+    .interactive-sql input:focus {
+        outline: none;
+        border-color: var(--primary-green);
+    }
+    #sql-output {
+        background-color: #1E1E1E;
+        padding: 1rem;
+        border-radius: 4px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-family: 'Roboto Mono', monospace;
+        color: var(--text-bright);
+    }
+    .sql-keyword { color: var(--sql-keyword); }
+    .sql-string { color: var(--sql-string); }
+    .sql-comment { color: var(--sql-comment); }
+    .sql-danger { color: var(--sql-danger); font-weight: bold; }
+
+</style>
+
+<div class="course-layout">
+    <aside class="task-sidebar">
+        <ol style="counter-reset: task-counter;">
+            <li class="task-item"><a href="#module1" class="nav-link">What is a Database?</a></li>
+            <li class="task-item"><a href="#module2" class="nav-link">Understanding SQL Injection</a></li>
+            <li class="task-item"><a href="#module3" class="nav-link">Common SQLi Techniques</a></li>
+            <li class="task-item"><a href="#module4" class="nav-link">Challenge Labs</a></li>
+        </ol>
+    </aside>
+
+    <main class="content-main">
+        <header>
+            <h1>Introduction To SQL Injection</h1>
+            <p class="subtitle">SQL Injection is one of the most dangerous and common web application vulnerabilities exploited by attackers to compromise backend databases. Understanding SQL injection is crucial for cybersecurity professionals, developers, and system administrators to safeguard sensitive data and infrastructure. By learning how these attacks are carried out, individuals gain the ability to anticipate vulnerabilities and implement more secure coding and defense practices.</p>
+        </header>
+
+        <section id="module1" class="module-section">
+            <h2>Module 1: What is a Database?</h2>
+            <p>At the heart of almost every modern web application is a **database**. A database is a structured system for storing, managing, and retrieving vast amounts of information efficiently. Think of it less like a simple filing cabinet and more like a massive, organized library where a librarian can find any piece of information in seconds.</p>
+            <p>This "library" is organized into **tables**. A table is like a single spreadsheet, dedicated to one type of information. For example, a `users` table might look like this:</p>
+            <pre>
+Table: users
++----+----------+------------------+
+| id | username | password_hash    |
++----+----------+------------------+
+| 1  | admin    | 21232f297a57a... |
+| 2  | alice    | 5f4dcc3b5aa76... |
+| 3  | bob      | 9f9d51bc70efb... |
++----+----------+------------------+
+            </pre>
+            <p>To communicate with the database, applications use a special language called **SQL (Structured Query Language)**. An SQL query is a command sent to the database. For example, to get all information about the user named 'admin', the application would send this query:</p>
+            <code>SELECT * FROM users WHERE username = 'admin';</code>
+        </section>
+
+        <section id="module2" class="module-section">
+            <h2>Module 2: Understanding SQL Injection</h2>
+            <p>SQL Injection (SQLi) is a critical vulnerability that occurs when an application fails to properly separate its own code from user-provided data. An attacker can submit specially crafted input that gets interpreted by the database not as data, but as part of the SQL command itself.</p>
+            <p>The root cause is **trusting user input**. When an application directly stitches user input into a database query, it creates an opportunity for manipulation. The database can't tell which parts of the query were intended by the developer and which parts were injected by an attacker.</p>
+            <div class="info-card">
+                 <div class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                </div>
+                <div>
+                    <h3>Potential Impact</h3>
+                    <p>A successful SQLi attack is not just a minor bug; it can be catastrophic. An attacker could potentially:</p>
+                    <ul>
+                        <li>Bypass authentication and impersonate other users, including administrators.</li>
+                        <li>Steal an entire database containing sensitive user data like emails, passwords, and financial information.</li>
+                        <li>Modify or delete data, causing irreparable damage to the application.</li>
+                        <li>Gain control of the underlying database server, which can lead to a full network compromise.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="module3" class="module-section">
+            <h2>Module 3: Common SQLi Techniques</h2>
+            <p>There are many types of SQL Injection. In our labs, you will focus on two of the most fundamental and impactful techniques.</p>
+            
+            <h3>Technique 1: Authentication Bypass</h3>
+            <p>This is often the first goal of an attacker: to log in without a valid password. This is done by injecting a logical condition into the `WHERE` clause of a query that always evaluates to true.</p>
+            <p>Imagine a backend query for a login form looks like this:</p>
+            <code>query = "SELECT * FROM users WHERE username = '" + username + "' AND password = '" + password + "'";</code>
+            
+            <!-- ✅ NEW: Interactive Code Block -->
+            <div class="interactive-sql">
+                <label for="username-payload">Enter your payload for the 'username' field:</label>
+                <input type="text" id="username-payload" value="admin' OR '1'='1' --">
+                
+                <label>Resulting SQL Query:</label>
+                <pre id="sql-output"></pre>
+            </div>
+            
+            <p>Here's why it works: The database sees `OR '1'='1'`, which is always true. The `--` is a comment in SQL, so it tells the database to ignore everything that comes after it, including the password check. The query effectively becomes "find a user where the username is 'admin' OR where 1 equals 1"—which will always return the admin user and log the attacker in.</p>
+
+            <h3>Technique 2: UNION-Based Data Exfiltration</h3>
+            <p>Once inside, or even through a public-facing feature like a search bar, an attacker's next goal is often to steal data. A UNION-based attack allows them to combine the results of the website's intended query with the results of a second, malicious query.</p>
+
+            <h3>Case Study: The TalkTalk Data Breach (2015)</h3>
+            <div class="info-card">
+                <div>
+                    <h3>The Attack</h3>
+                    <p>In 2015, the British telecommunications company TalkTalk was the victim of a major data breach. A 17-year-old attacker found a simple SQL Injection vulnerability on one of the company's websites. Using a UNION-based technique, the attacker was able to dump the contents of the customer database.</p>
+                    <h3>The Result</h3>
+                    <p>The attacker stole the personal and financial details of over 150,000 customers, including names, addresses, and bank account numbers. The company was fined a record £400,000 and suffered massive reputational damage. This case is a powerful reminder that even the most basic SQL Injection vulnerability can have devastating real-world consequences for a major corporation.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="module4" class="module-section">
+            <h2>Module 4: Challenge Labs</h2>
+             <div class="info-card">
+                <div class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                </div>
+                <div>
+                    <h3>Your Goal</h3>
+                    <p>You have completed the theory. Now it's time to put your knowledge to the test in our simulated environments. Good luck, ethical hacker.</p>
+                    <div>
+                        <a href="{% url 'core:login_bypass' %}" class="challenge-button">Launch: Login Bypass Lab</a>
+                        <a href="{% url 'core:sql_injection' %}" class="challenge-button">Launch: SQL Injection Lab</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sections = document.querySelectorAll('.module-section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        // Smooth scrolling for nav links
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+
+        // Intersection Observer to highlight the active link on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.4 });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+        // ✅ NEW: JavaScript for the Interactive SQL Block
+        const payloadInput = document.getElementById('username-payload');
+        const sqlOutput = document.getElementById('sql-output');
+
+        function updateQuery() {
+            const userInput = payloadInput.value;
+            
+            // Base query structure
+            const part1 = `SELECT * FROM users WHERE username = '`;
+            const part2 = `' AND password = '...';`;
+            
+            // Simple syntax highlighting
+            let highlightedInput = userInput
+                .replace(/OR/gi, `<span class="sql-danger">OR</span>`)
+                .replace(/AND/gi, `<span class="sql-danger">AND</span>`)
+                .replace(/--/g, `<span class="sql-comment">--</span>`);
+
+            let finalQuery = `<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> users <span class="sql-keyword">WHERE</span> username = <span class="sql-string">'${highlightedInput}'</span> <span class="sql-keyword">AND</span> password = <span class="sql-string">'...'</span>;`;
+
+            sqlOutput.innerHTML = finalQuery;
+        }
+
+        // Update the query every time the user types
+        payloadInput.addEventListener('input', updateQuery);
+
+        // Initial call to display the default query
+        updateQuery();
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+
+{% block title %}Command Injection Course{% endblock %}
+
+{% block extra_head %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<style>
+    /* UI styles to match your other course pages */
+    :root {
+        --primary-green: #39FF14;
+        --background-main: #0A0A0A;
+        --background-card: rgba(10, 10, 10, 0.6);
+        --text-bright: #F9FAFB;
+        --text-muted: #9CA3AF;
+        --border-color: rgba(57, 255, 20, 0.2);
+    }
+    .course-layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 3rem;
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+    .task-sidebar {
+        position: sticky;
+        top: 100px;
+        align-self: start;
+    }
+    .task-sidebar ol {
+        list-style: none;
+        padding-left: 1.5rem;
+        position: relative;
+        border-left: 2px solid var(--border-color);
+    }
+    .task-item a {
+        display: block;
+        position: relative;
+        padding: 1rem 0 1rem 2.5rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+    .task-item a::before {
+        content: counter(task-counter);
+        counter-increment: task-counter;
+        position: absolute;
+        left: -1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background-color: var(--background-main);
+        border: 2px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        transition: border-color 0.2s, color 0.2s;
+    }
+    .task-item a:hover { color: var(--text-bright); }
+    .task-item a.active {
+        color: var(--primary-green);
+        font-weight: bold;
+    }
+    .task-item a.active::before {
+        border-color: var(--primary-green);
+        color: var(--primary-green);
+    }
+    .content-main h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-green);
+        margin-bottom: 0.5rem;
+    }
+    .content-main .subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 3rem; }
+    .module-section { margin-bottom: 3rem; padding-top: 2rem; }
+    .module-section h2 { font-size: 1.8rem; font-weight: 600; color: var(--text-bright); margin-bottom: 1.5rem; }
+    .module-section p { font-size: 1rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 1rem; }
+    .module-section pre[class*="language-"] { background-color: #1a1a1a; border: 1px solid var(--border-color); border-radius: 8px; }
+    .info-card { background-color: var(--background-card); border: 1px solid var(--border-color); backdrop-filter: blur(10px); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    .code-block-title { font-weight: bold; color: var(--text-bright); margin-bottom: 0.5rem; display: block; }
+    .challenge-button { background-color: var(--primary-green); color: #000; font-size: 1rem; padding: 0.7rem 1.5rem; border-radius: 8px; text-decoration: none; display: inline-block; font-weight: bold; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="course-layout">
+    <aside class="task-sidebar">
+        <ol style="counter-reset: task-counter;">
+            <li class="task-item"><a href="#module1" class="nav-link">What is Command Injection?</a></li>
+            <li class="task-item"><a href="#module2" class="nav-link">The Insecure Way</a></li>
+            <li class="task-item"><a href="#module3" class="nav-link">The Secure Way</a></li>
+            <li class="task-item"><a href="#module4" class="nav-link">Challenge Lab</a></li>
+        </ol>
+    </aside>
+
+    <main class="content-main">
+        <header>
+            <h1>OS Command Injection</h1>
+            <p class="subtitle">When User Input Becomes a System Command</p>
+        </header>
+
+        <section id="module1" class="module-section">
+            <h2>Module 1: What is Command Injection?</h2>
+            <p>OS Command Injection is a critical web security vulnerability that allows an attacker to execute arbitrary operating system (OS) commands on the server that is running an application. This vulnerability is possible when an application accepts user input and incorporates it into a command that the application executes.</p>
+            <p>This can lead to a full system compromise, as the attacker can use the web server's permissions to read sensitive files, modify data, or connect to other systems on the network.</p>
+        </section>
+
+        <section id="module2" class="module-section">
+            <h2>Module 2: How It Happens - The Insecure Way</h2>
+            <p>The root cause of command injection is building a command string by directly concatenating or formatting untrusted user input. The application's shell interpreter cannot distinguish between the intended command and the attacker's injected command.</p>
+            <p>Imagine a "Network Diagnostic Tool" that lets a user ping an IP address. The backend code might look like this:</p>
+            
+            <span class="code-block-title text-red-400">INSECURE CODE (Do NOT use this):</span>
+            {% verbatim %}
+            <pre><code class="language-python">
+import os
+
+def ping_utility(request):
+    ip_address = request.GET.get('ip')
+    
+    # VULNERABLE: User input is formatted directly into the command string.
+    command = f"ping -c 4 {ip_address}"
+    
+    # The os.system() function is dangerous as it invokes a subshell.
+    os.system(command) 
+    
+    # ... (code to return output) ...
+            </code></pre>
+            {% endverbatim %}
+            <p>An attacker can use a shell command separator (like `;` on Linux or `&` on Windows) to chain commands. If they enter `8.8.8.8; whoami`, the server will execute:</p>
+            <pre><code class="language-bash">
+ping -c 4 8.8.8.8; whoami
+            </code></pre>
+            <p>The server will ping the IP address and then immediately run the `whoami` command, revealing the server's username to the attacker.</p>
+        </section>
+
+        <section id="module3" class="module-section">
+            <h2>Module 3: How to Prevent It - The Secure Way</h2>
+            <p>The definitive way to prevent OS Command Injection is to **never** pass user input to a shell interpreter. Instead, you should use structured APIs that treat user input as arguments to a command, not as part of the command itself.</p>
+            <p>In Python, the `subprocess` module is the correct tool for this.</p>
+
+            <span class="code-block-title text-green-400">SECURE CODE (The Correct Method):</span>
+            {% verbatim %}
+            <pre><code class="language-python">
+import subprocess
+
+def secure_ping_utility(request):
+    ip_address = request.GET.get('ip')
+    
+    # SAFE: The command and its arguments are passed as a list.
+    # The user input is treated as a single, distinct argument.
+    command = ["ping", "-c", "4", ip_address]
+    
+    # subprocess.run() with a list of arguments does not use a shell by default.
+    result = subprocess.run(command, capture_output=True, text=True)
+    
+    # ... (code to safely return result.stdout or result.stderr) ...
+            </code></pre>
+            {% endverbatim %}
+            <p>If an attacker enters `8.8.8.8; whoami` now, the `subprocess` module will treat the entire string `"8.8.8.8; whoami"` as a single, invalid IP address. The `ping` command will fail, but the `whoami` command will **never be executed**.</p>
+        </section>
+
+        <section id="module4" class="module-section">
+            <h2>Module 4: Challenge Lab</h2>
+            <div class="info-card">
+                <div>
+                    <h3>Your Goal</h3>
+                    <p>You have learned the theory. Now it's time to put your knowledge to the test in our simulated lab. Good luck, ethical hacker.</p>
+                    <div>
+                        <a href="{% url 'core:command_injection_lab' %}" class="challenge-button">Launch: Command Injection Lab</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sections = document.querySelectorAll('.module-section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.4 });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+    });
+</script>
+{% endblock %}
+

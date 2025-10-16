@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+
+{% block title %}Cryptography Course | VulnBox{% endblock %}
+
+{% block content %}
+
+<style>
+    /* --- PROFESSIONAL LAYOUT WITH DASHBOARD COLOR THEME --- */
+    
+    :root {
+        --primary-green: #39FF14;
+        --accent-mint: #6AFFAF;
+        --background-main: #0A0A0A;
+        --background-card: rgba(10, 10, 10, 0.6);
+        --text-bright: #F9FAFB;
+        --text-muted: #9CA3AF;
+        --text-dark-on-mint: #111827;
+        --border-color: rgba(57, 255, 20, 0.2);
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--background-main);
+    }
+    
+    .course-layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 3rem;
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+
+    .task-sidebar {
+        position: sticky;
+        top: 100px;
+        align-self: start;
+    }
+
+    .task-sidebar ol {
+        list-style: none;
+        padding-left: 1.5rem;
+        position: relative;
+        border-left: 2px solid var(--border-color);
+    }
+    
+    .task-item a {
+        display: block;
+        position: relative;
+        padding: 1rem 0 1rem 2.5rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .task-item a::before {
+        content: counter(task-counter);
+        counter-increment: task-counter;
+        position: absolute;
+        left: -1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background-color: var(--background-main);
+        border: 2px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        transition: border-color 0.2s, color 0.2s;
+    }
+
+    .task-item a:hover { color: var(--text-bright); }
+    
+    .task-item a.active {
+        color: var(--primary-green);
+        font-weight: bold;
+    }
+    .task-item a.active::before {
+        border-color: var(--primary-green);
+        color: var(--primary-green);
+    }
+
+    .content-main h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-green);
+        margin-bottom: 0.5rem;
+    }
+    .content-main .subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 3rem; }
+
+    .module-section { margin-bottom: 3rem; padding-top: 2rem; }
+    .module-section h2 {
+        font-size: 1.8rem; font-weight: 600; color: var(--text-bright);
+        margin-bottom: 1.5rem;
+    }
+     .module-section h3 {
+        font-size: 1.3rem; font-weight: 600; color: var(--text-bright);
+        margin-top: 2rem; margin-bottom: 1rem;
+    }
+    .module-section p, .module-section li { font-size: 1rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 1rem; }
+    .module-section code {
+        background-color: var(--background-card); border: 1px solid var(--border-color);
+        color: #F3F4F6; padding: 0.2rem 0.5rem; border-radius: 4px;
+        font-family: 'Roboto Mono', monospace;
+    }
+    .module-section ul { list-style-type: disc; padding-left: 1.5rem; }
+
+    .info-card {
+        background-color: var(--background-card);
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        display: flex;
+        gap: 1.5rem;
+        align-items: flex-start;
+    }
+    .info-card .icon { color: var(--text-muted); flex-shrink: 0; }
+    .info-card h3 { font-size: 1.1rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.5rem; }
+
+    .challenge-button {
+        background-color: var(--accent-mint);
+        color: var(--text-dark-on-mint);
+        font-size: 1rem; padding: 0.7rem 1.5rem; border-radius: 8px;
+        transition: background-color 0.3s ease; text-decoration: none; display: inline-block;
+        margin: 0.5rem; font-weight: bold;
+    }
+    .challenge-button:hover { background-color: #8BFFC8; }
+</style>
+
+<div class="course-layout">
+    <!-- LEFT SIDEBAR: Task Navigation -->
+    <aside class="task-sidebar">
+        <ol style="counter-reset: task-counter;">
+            <li class="task-item"><a href="#module1" class="nav-link">What is Cryptography?</a></li>
+            <li class="task-item"><a href="#module2" class="nav-link">The Caesar Cipher</a></li>
+            <li class="task-item"><a href="#module3" class="nav-link">Breaking the Code</a></li>
+            <li class="task-item"><a href="#module4" class="nav-link">Challenge Lab</a></li>
+        </ol>
+    </aside>
+
+    <!-- RIGHT CONTENT: Scrollable Course Material -->
+    <main class="content-main">
+        <header>
+            <h1>Introduction to Cryptography</h1>
+            <p class="subtitle">Learn the art of secret codes and how to break them.</p>
+        </header>
+
+        <section id="module1" class="module-section">
+            <h2>Module 1: What is Cryptography?</h2>
+            <p>**Cryptography** is the practice of securing communication from adversaries. At its core, it's about transforming a readable message (called **plaintext**) into an unreadable one (called **ciphertext**), and then back again. This ensures that even if a message is intercepted, it cannot be understood by anyone without the secret key.</p>
+            <p>This process involves two key components:</p>
+            <ul>
+                <li><strong>The Algorithm (Cipher):</strong> The set of rules or steps used to perform the encryption and decryption.</li>
+                <li><strong>The Key:</strong> A secret piece of information. The same plaintext encrypted with the same algorithm but a different key will produce a completely different ciphertext.</li>
+            </ul>
+        </section>
+
+        <section id="module2" class="module-section">
+            <h2>Module 2: The Caesar Cipher</h2>
+            <p>One of the oldest and simplest ciphers is the **Caesar cipher**. It's a substitution cipher where each letter in the plaintext is shifted a certain number of places down the alphabet. This number is the "key".</p>
+            <div class="info-card">
+                <div class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                </div>
+                <div>
+                    <h3>Example: A Shift of 3 (Key = 3)</h3>
+                    <p>If we want to encrypt the word <code>HELLO</code> with a key of 3:</p>
+                    <ul>
+                        <li>H shifts 3 places to become K</li>
+                        <li>E shifts 3 places to become H</li>
+                        <li>L shifts 3 places to become O</li>
+                        <li>L shifts 3 places to become O</li>
+                        <li>O shifts 3 places to become R</li>
+                    </ul>
+                    <p>So, the plaintext <code>HELLO</code> becomes the ciphertext <code>KHOOR</code>.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="module3" class="module-section">
+            <h2>Module 3: Breaking the Code</h2>
+            <p>The Caesar cipher is extremely weak because there are only 25 possible keys (shifts 1 through 25). An attacker doesn't need to be a genius to break it; they just need to be systematic.</p>
+            <p>The method for breaking it is a **brute-force attack**. An attacker simply tries every possible key until the decrypted message makes sense. For example, if they receive the message <code>KHOOR</code>, they would try:</p>
+            <ul>
+                <li><strong>Key 1:</strong> JGN_NQ_ (Doesn't make sense)</li>
+                <li><strong>Key 2:</strong> IFMMP (Doesn't make sense)</li>
+                <li><strong>Key 3:</strong> HELLO (This is a real word! The key is 3.)</li>
+            </ul>
+
+            <h3>Case Study: Cracking the Enigma Code (WWII)</h3>
+            <div class="info-card">
+                <div>
+                    <h3>The Challenge</h3>
+                    <p>During World War II, the German military used a complex encryption machine called the Enigma. It was far more advanced than a simple Caesar cipher, with millions of possible settings. The Allies, led by Alan Turing at Bletchley Park, were tasked with breaking it.</p>
+                    <h3>The Solution</h3>
+                    <p>They couldn't brute-force every setting, but they used a combination of clever techniques, including analyzing repeated phrases and building an early electro-mechanical computer called the "Bombe." This machine could test thousands of possible keys a day, allowing the Allies to decrypt German communications and significantly shorten the war. This is a powerful real-world example of how even the strongest-seeming encryption can be broken with analysis and computational power.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="module4" class="module-section">
+            <h2>Module 4: Challenge Lab</h2>
+             <div class="info-card">
+                <div class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                </div>
+                <div>
+                    <h3>Your Goal</h3>
+                    <p>You have intercepted an encrypted message. You know it was encrypted using a simple Caesar cipher. Your mission is to brute-force all possible keys to decrypt the message and find the hidden flag.</p>
+                    <div>
+                       <a href="{% url 'core:crypto_lab' %}" class="challenge-button">Launch: Caesar Cipher Lab</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sections = document.querySelectorAll('.module-section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.4 });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}SQL Injection Challenge | VulnBox{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Kept your background image setting */
+    body {
+        background: url("{% static 'images/hacker_wallpaper.png' %}") no-repeat center center fixed !important;
+        background-size: cover !important;
+        font-family: 'Courier New', monospace;
+    }
+
+    /* Main container for the challenge */
+    .sql-container {
+        background-color: rgba(0, 0, 0, 0.85);
+        max-width: 700px;
+        margin: 5% auto;
+        padding: 2rem;
+        border-radius: 10px;
+        border: 2px solid #0f0;
+        box-shadow: 0 0 25px rgba(0, 255, 0, 0.3);
+    }
+
+    .sql-container h1 {
+        text-align: center;
+        color: #0f0;
+        margin-bottom: 0.5rem;
+        font-size: 1.8rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 0 0 5px #0f0;
+    }
+
+    .sql-container .mission-brief {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #a8ffb9;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    /* --- UPGRADED INPUT & FORM --- */
+    .sql-form {
+        display: flex; /* Aligns input and button side-by-side */
+        gap: 10px;
+        align-items: center;
+    }
+
+    .sql-form label {
+        color: #0f0;
+        font-weight: bold;
+        white-space: nowrap; /* Prevents "Search Query:" from wrapping */
+    }
+
+    .sql-container input[type="text"] {
+        flex-grow: 1; /* Input field takes up available space */
+        padding: 12px;
+        background-color: #051005;
+        border: 1px solid #0f0;
+        border-radius: 5px;
+        color: #0f0;
+        font-size: 1rem;
+        font-family: 'Courier New', monospace;
+        transition: all 0.3s ease;
+    }
+
+    .sql-container input[type="text"]::placeholder {
+        color: rgba(0, 255, 0, 0.4);
+    }
+
+    .sql-container input[type="text"]:focus {
+        outline: none;
+        border-color: #3f3;
+        box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+    }
+    
+    .sql-container button {
+        padding: 12px 20px;
+        background-color: #0f0;
+        color: #000;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        font-family: 'Courier New', monospace;
+    }
+
+    .sql-container button:hover {
+        background-color: #fff;
+        box-shadow: 0 0 20px #fff;
+    }
+
+    /* --- UPGRADED RESULTS/MESSAGE AREA --- */
+    .results-terminal {
+        background-color: #000;
+        border: 1px solid #0f0;
+        border-radius: 5px;
+        margin-top: 2rem;
+        padding: 1.5rem;
+        min-height: 100px;
+        font-size: 0.9rem;
+        white-space: pre-wrap; /* Preserves formatting and wraps text */
+        word-wrap: break-word;
+    }
+
+    .results-terminal .prompt {
+        color: #0f0;
+    }
+    
+    .results-terminal .prompt::before {
+        content: 'VulnBox:~# '; /* Adds a fake shell prompt */
+    }
+    
+    .results-terminal .output {
+        color: #a8ffb9;
+    }
+
+    .results-terminal .output.error {
+        color: #ff4d4d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sql-container">
+    <h1>Objective: Exfiltrate Data</h1>
+    <p class="mission-brief">This search terminal is directly connected to a sensitive database. Your mission is to manipulate the backend query to find and retrieve the hidden flag.</p>
+
+    <form method="POST" class="sql-form">
+        {% csrf_token %}
+        <label for="query">Search Query:</label>
+        <input type="text" id="query" name="query" placeholder="Enter payload...">
+        <button type="submit">Inject</button>
+    </form>
+
+    {% if message %}
+    <div class="results-terminal">
+        <span class="prompt"></span><span class="output {{ message_class }}">{{ message }}</span>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

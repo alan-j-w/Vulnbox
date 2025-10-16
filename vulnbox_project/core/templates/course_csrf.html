@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+
+{% block title %}CSRF Course | VulnBox{% endblock %}
+
+{% block content %}
+
+<style>
+    /* --- PROFESSIONAL LAYOUT WITH DASHBOARD COLOR THEME --- */
+    
+    :root {
+        --primary-green: #39FF14;
+        --accent-mint: #6AFFAF;
+        --background-main: #0A0A0A;
+        --background-card: rgba(10, 10, 10, 0.6);
+        --text-bright: #F9FAFB;
+        --text-muted: #9CA3AF;
+        --text-dark-on-mint: #111827;
+        --border-color: rgba(57, 255, 20, 0.2);
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--background-main);
+    }
+    
+    .course-layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 3rem;
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+
+    .task-sidebar {
+        position: sticky;
+        top: 100px;
+        align-self: start;
+    }
+
+    .task-sidebar ol {
+        list-style: none;
+        padding-left: 1.5rem;
+        position: relative;
+        border-left: 2px solid var(--border-color);
+    }
+    
+    .task-item a {
+        display: block;
+        position: relative;
+        padding: 1rem 0 1rem 2.5rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .task-item a::before {
+        content: counter(task-counter);
+        counter-increment: task-counter;
+        position: absolute;
+        left: -1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background-color: var(--background-main);
+        border: 2px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        transition: border-color 0.2s, color 0.2s;
+    }
+
+    .task-item a:hover { color: var(--text-bright); }
+    
+    .task-item a.active {
+        color: var(--primary-green);
+        font-weight: bold;
+    }
+    .task-item a.active::before {
+        border-color: var(--primary-green);
+        color: var(--primary-green);
+    }
+
+    .content-main h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-green);
+        margin-bottom: 0.5rem;
+    }
+    .content-main .subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 3rem; }
+
+    .module-section { margin-bottom: 3rem; padding-top: 2rem; }
+    .module-section h2 {
+        font-size: 1.8rem; font-weight: 600; color: var(--text-bright);
+        margin-bottom: 1.5rem;
+    }
+     .module-section h3 {
+        font-size: 1.3rem; font-weight: 600; color: var(--text-bright);
+        margin-top: 2rem; margin-bottom: 1rem;
+    }
+    .module-section p, .module-section li { font-size: 1rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 1rem; }
+    .module-section code {
+        background-color: var(--background-card); border: 1px solid var(--border-color);
+        color: #F3F4F6; padding: 0.2rem 0.5rem; border-radius: 4px;
+        font-family: 'Roboto Mono', monospace;
+    }
+    .module-section ul { list-style-type: disc; padding-left: 1.5rem; }
+
+    .info-card {
+        background-color: var(--background-card);
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        display: flex;
+        gap: 1.5rem;
+        align-items: flex-start;
+    }
+    .info-card .icon { color: var(--text-muted); flex-shrink: 0; }
+    .info-card h3 { font-size: 1.1rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.5rem; }
+
+    .challenge-button {
+        background-color: var(--accent-mint);
+        color: var(--text-dark-on-mint);
+        font-size: 1rem; padding: 0.7rem 1.5rem; border-radius: 8px;
+        transition: background-color 0.3s ease; text-decoration: none; display: inline-block;
+        margin: 0.5rem; font-weight: bold;
+    }
+    .challenge-button:hover { background-color: #8BFFC8; }
+</style>
+
+<div class="course-layout">
+    <!-- LEFT SIDEBAR: Task Navigation -->
+    <aside class="task-sidebar">
+        <ol style="counter-reset: task-counter;">
+            <li class="task-item"><a href="#module1" class="nav-link">What is CSRF?</a></li>
+            <li class="task-item"><a href="#module2" class="nav-link">How it Works</a></li>
+            <li class="task-item"><a href="#module3" class="nav-link">Prevention</a></li>
+            <li class="task-item"><a href="#module4" class="nav-link">Challenge Lab</a></li>
+        </ol>
+    </aside>
+
+    <!-- RIGHT CONTENT: Scrollable Course Material -->
+    <main class="content-main">
+        <header>
+            <h1>Introduction to Cross-Site Request Forgery (CSRF)</h1>
+            <p class="subtitle">Understand how attackers trick authenticated users into performing unwanted actions.</p>
+        </header>
+
+        <section id="module1" class="module-section">
+            <h2>Module 1: What is Cross-Site Request Forgery (CSRF)?</h2>
+            <p>**Cross-Site Request Forgery (CSRF)** is an attack that forces an authenticated user to submit a request to a web application against which they are currently authenticated. These attacks are designed to perform an unwanted action, such as changing the user's email address, transferring funds, or deleting data.</p>
+            <p>Unlike XSS, which exploits the trust a user has in a website, CSRF exploits the trust that a website has in a user's browser.</p>
+        </section>
+
+        <section id="module2" class="module-section">
+            <h2>Module 2: How a CSRF Attack Works</h2>
+            <p>A successful CSRF attack requires three conditions:</p>
+            <ul>
+                <li><strong>A Relevant Action:</strong> The application must have an action that the attacker wants to induce, like changing the user's password.</li>
+                <li><strong>Cookie-Based Session Handling:</strong> The application must rely solely on session cookies to identify the user who has made the request.</li>
+                <li><strong>No Unpredictable Request Parameters:</strong> The request that performs the action must not have any parameters whose values the attacker cannot determine or guess.</li>
+            </ul>
+            <div class="info-card">
+                <div>
+                    <h3>Analogy: The Malicious Postcard</h3>
+                    <p>Imagine you are logged into your online banking website. Your browser has a session cookie that proves you are authenticated. Now, you visit a different, malicious website. This site has a hidden form that is pre-filled to transfer $1,000 from your account to the attacker's. The form is automatically submitted by a script on the page.</p>
+                    <p>Your browser, seeing a request to your bank, will helpfully include your session cookie. The bank's server receives a legitimate-looking request to transfer funds, complete with your valid session cookie, and processes it. You've just been tricked into sending an unwanted, authenticated request.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="module3" class="module-section">
+            <h2>Module 3: Prevention</h2>
+            <p>The most common and effective defense against CSRF is the use of **anti-CSRF tokens**. The server generates a random, unpredictable token and includes it as a hidden field in every form. When the user submits the form, this token is sent back. The server will only process the request if the submitted token matches the one it generated for that user's session. Since the attacker cannot guess this token, they cannot forge a valid request.</p>
+        </section>
+
+        <section id="module4" class="module-section">
+            <h2>Module 4: Challenge Lab</h2>
+             <div class="info-card">
+                <div class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                </div>
+                <div>
+                    <h3>Your Goal</h3>
+                    <p>You will be given a simple settings page where you can change your email address. This page is vulnerable to CSRF. Your mission is to craft a malicious web page that, when visited by a logged-in user, will trick their browser into changing their email address to one you control.</p>
+                    <div>
+                      <a href="{% url 'core:csrf_lab' %}" class="challenge-button">Launch: CSRF Lab</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sections = document.querySelectorAll('.module-section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.4 });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+    });
+</script>
+
+{% endblock %}

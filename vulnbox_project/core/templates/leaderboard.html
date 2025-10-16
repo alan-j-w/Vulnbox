@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Leaderboard | VulnBox{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* --- Your existing styles are perfect, no changes needed here --- */
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+    :root {
+        --panel-bg: rgba(20, 20, 25, 0.6);
+        --border-color: rgba(57, 255, 20, 0.2);
+        --glow-color: rgba(57, 255, 20, 0.7);
+        --text-primary: #E5E7EB;
+        --text-secondary: #9CA3AF;
+        --accent-green: #39FF14;
+        --gold: #FFD700;
+        --silver: #C0C0C0;
+        --bronze: #CD7F32;
+    }
+    .font-orbitron { font-family: 'Orbitron', sans-serif; }
+    #particles-js { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: -1; }
+    .ui-panel {
+        background: var(--panel-bg); border: 1px solid var(--border-color); backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px); border-radius: 12px; position: relative;
+    }
+    .ui-panel::before, .ui-panel::after {
+        content: ''; position: absolute; width: 12px; height: 12px; border-style: solid; border-color: var(--glow-color);
+    }
+    .ui-panel::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; border-radius: 12px 0 0 0; }
+    .ui-panel::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; border-radius: 0 0 12px 0; }
+    .main-header h1 {
+        font-family: 'Orbitron', sans-serif; font-size: 2.5rem; color: var(--text-primary);
+        text-shadow: 0 0 10px var(--glow-color); margin-bottom: 1rem;
+    }
+    .leaderboard-table { width: 100%; border-collapse: collapse; }
+    .leaderboard-table th, .leaderboard-table td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+    .leaderboard-table th {
+        font-family: 'Orbitron', sans-serif; color: var(--text-primary); text-transform: uppercase;
+        font-size: 0.9rem; letter-spacing: 1px;
+    }
+    .leaderboard-table td { color: var(--text-primary); font-size: 1.1rem; }
+    .leaderboard-table tbody tr { transition: background-color 0.2s; }
+    .leaderboard-table tbody tr:hover { background-color: rgba(57, 255, 20, 0.05); }
+    .rank { font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1.25rem; text-align: center; }
+    .rank-1 { color: var(--gold); text-shadow: 0 0 8px var(--gold); }
+    .rank-2 { color: var(--silver); text-shadow: 0 0 8px var(--silver); }
+    .rank-3 { color: var(--bronze); text-shadow: 0 0 8px var(--bronze); }
+    .score { font-weight: 700; color: var(--accent-green); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="particles-js"></div>
+
+<div class="p-4 sm:p-8 max-w-5xl mx-auto w-full">
+    <div class="ui-panel p-6 sm:p-8">
+        <header class="main-header">
+            <h1>LEADERBOARD</h1>
+        </header>
+        
+        <div class="overflow-x-auto">
+            <table class="leaderboard-table w-full">
+                <thead>
+                    <tr>
+                        <th class="text-center w-24">Rank</th>
+                        <th>Player</th>
+                        <th class="text-right">Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user_profile in users %}
+                    <tr>
+                        <td class="rank 
+                            {% if forloop.counter == 1 %}rank-1{% endif %}
+                            {% if forloop.counter == 2 %}rank-2{% endif %}
+                            {% if forloop.counter == 3 %}rank-3{% endif %}
+                        ">
+                            #{{ forloop.counter }}
+                        </td>
+                        <!-- === START: UPDATED PLAYER CELL === -->
+                        <td>
+                            <div class="flex items-center gap-4">
+                                <img src="{{ user_profile.profile_picture.url }}" alt="{{ user_profile.username }}'s profile picture" class="w-12 h-12 rounded-full object-cover border-2 border-gray-700">
+                                <span>{{ user_profile.username }}</span>
+                            </div>
+                        </td>
+                        <!-- === END: UPDATED PLAYER CELL === -->
+                        <td class="text-right score">{{ user_profile.score }} PTS</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-gray-400 py-8">No users have scored any points yet. Be the first!</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+    // This Javascript is unchanged and correct
+    document.addEventListener('DOMContentLoaded', function() {
+        particlesJS("particles-js", {"particles":{"number":{"value":80,"density":{"enable":true,"value_area":800}},"color":{"value":"#39FF14"},"shape":{"type":"circle"},"opacity":{"value":0.4,"random":true},"size":{"value":3,"random":true},"line_linked":{"enable":true,"distance":150,"color":"#39FF14","opacity":0.2,"width":1},"move":{"enable":true,"speed":2,"direction":"none","out_mode":"out"}},"interactivity":{"detect_on":"window","events":{"onhover":{"enable":true,"mode":"repulse"}},"modes":{"repulse":{"distance":100,"duration":0.4}}},"retina_detect":true});
+    });
+</script>
+{% endblock %}
+

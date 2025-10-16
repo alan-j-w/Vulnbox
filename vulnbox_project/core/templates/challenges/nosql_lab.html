@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}NoSQL Injection Lab{% endblock %}
+
+{% block content %}
+<style>
+    .lab-container {
+        max-width: 450px;
+        margin: 4rem auto;
+        padding: 2.5rem;
+        background-color: rgba(10, 10, 10, 0.6);
+        border: 1px solid rgba(57, 255, 20, 0.2);
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+    }
+
+    .lab-container h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #39FF14;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .form-group { margin-bottom: 1.5rem; }
+    .form-group label { display: block; color: #F9FAFB; margin-bottom: 0.5rem; font-weight: 500; }
+    .form-group input {
+        width: 100%;
+        background-color: rgba(10, 10, 10, 0.8);
+        border: 1px solid #374151;
+        color: #F9FAFB;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-group input:focus {
+        outline: none;
+        border-color: #39FF14;
+        box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+    }
+
+    .submit-btn {
+        width: 100%;
+        background-color: #6AFFAF;
+        color: #111827;
+        font-weight: bold;
+        padding: 0.75rem;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    .submit-btn:hover { background-color: #8BFFC8; }
+
+    .error-message { text-align: center; color: #F87171; margin-top: 1.5rem; font-weight: 500; }
+    
+    .mission-brief {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        border: 1px dashed rgba(57, 255, 20, 0.3);
+        border-radius: 8px;
+        text-align: left;
+    }
+    .mission-brief h2 { color: #fff; font-weight: 600; margin-bottom: 1rem; }
+    .mission-brief p { color: #9CA3AF; font-size: 0.9rem; line-height: 1.6; }
+    .mission-brief code {
+        background-color: #0A0A0A;
+        border: 1px solid #374151;
+        color: #F3F4F6;
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-family: 'Roboto Mono', monospace;
+    }
+</style>
+
+<div class="lab-container">
+    <h1>NoSQL Database Login</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" value="admin" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="text" id="password" name="password" required>
+        </div>
+        <button type="submit" class="submit-btn">> Authenticate</button>
+
+        {% if error %}
+            <div class="error-message">
+                <p>{{ error }}</p>
+            </div>
+        {% endif %}
+    </form>
+
+    <div class="mission-brief">
+        <h2>Mission Brief</h2>
+        <p>This login form is vulnerable to a NoSQL operator injection. Your goal is to log in as the 'admin' user without knowing the password.</p>
+        <p class="mt-2">Hint: Try injecting a JSON object with a "not equal" operator (<code>$ne</code>) into the password field.</p>
+    </div>
+</div>
+{% endblock %}

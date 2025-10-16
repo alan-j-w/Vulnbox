@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+
+{% block title %}Brute-Force Attack Course{% endblock %}
+
+{% block content %}
+
+<style>
+    /* --- PROFESSIONAL LAYOUT WITH DASHBOARD COLOR THEME --- */
+    
+    :root {
+        --primary-green: #39FF14;
+        --accent-mint: #6AFFAF;
+        --background-main: #0A0A0A;
+        --background-card: rgba(10, 10, 10, 0.6);
+        --text-bright: #F9FAFB;
+        --text-muted: #9CA3AF;
+        --text-dark-on-mint: #111827;
+        --border-color: rgba(57, 255, 20, 0.2);
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--background-main);
+    }
+    
+    .course-layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 3rem;
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+
+    .task-sidebar {
+        position: sticky;
+        top: 100px;
+        align-self: start;
+    }
+
+    .task-sidebar ol {
+        list-style: none;
+        padding-left: 1.5rem;
+        position: relative;
+        border-left: 2px solid var(--border-color);
+    }
+    
+    .task-item a {
+        display: block;
+        position: relative;
+        padding: 1rem 0 1rem 2.5rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .task-item a::before {
+        content: counter(task-counter);
+        counter-increment: task-counter;
+        position: absolute;
+        left: -1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background-color: var(--background-main);
+        border: 2px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        transition: border-color 0.2s, color 0.2s;
+    }
+
+    .task-item a:hover { color: var(--text-bright); }
+    
+    .task-item a.active {
+        color: var(--primary-green);
+        font-weight: bold;
+    }
+    .task-item a.active::before {
+        border-color: var(--primary-green);
+        color: var(--primary-green);
+    }
+
+    .content-main h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-green);
+        margin-bottom: 0.5rem;
+    }
+    .content-main .subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 3rem; }
+
+    .module-section { margin-bottom: 3rem; padding-top: 2rem; }
+    .module-section h2 {
+        font-size: 1.8rem; font-weight: 600; color: var(--text-bright);
+        margin-bottom: 1.5rem;
+    }
+    .module-section h3 {
+        font-size: 1.3rem; font-weight: 600; color: var(--text-bright);
+        margin-top: 2rem; margin-bottom: 1rem;
+    }
+    .module-section p, .module-section li { font-size: 1rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 1rem; }
+    .module-section code {
+        background-color: var(--background-card); border: 1px solid var(--border-color);
+        color: #F3F4F6; padding: 0.2rem 0.5rem; border-radius: 4px;
+        font-family: 'Roboto Mono', monospace;
+    }
+    .module-section ul { list-style-type: disc; padding-left: 1.5rem; }
+
+    .info-card {
+        background-color: var(--background-card);
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        display: flex;
+        gap: 1.5rem;
+        align-items: flex-start;
+    }
+    .info-card .icon { color: var(--text-muted); flex-shrink: 0; }
+    .info-card h3 { font-size: 1.1rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.5rem; }
+
+    .challenge-button {
+        background-color: var(--accent-mint);
+        color: var(--text-dark-on-mint);
+        font-size: 1rem; padding: 0.7rem 1.5rem; border-radius: 8px;
+        transition: background-color 0.3s ease; text-decoration: none; display: inline-block;
+        margin: 0.5rem; font-weight: bold;
+    }
+    .challenge-button:hover { background-color: #8BFFC8; }
+</style>
+
+<div class="course-layout">
+    <!-- LEFT SIDEBAR: Task Navigation -->
+    <aside class="task-sidebar">
+        <ol style="counter-reset: task-counter;">
+            <li class="task-item"><a href="#module1" class="nav-link">What is a Brute-Force Attack?</a></li>
+            <li class="task-item"><a href="#module2" class="nav-link">Types of Brute-Force Attacks</a></li>
+            <li class="task-item"><a href="#module3" class="nav-link">Prevention Techniques</a></li>
+            <li class="task-item"><a href="#module4" class="nav-link">Challenge Lab</a></li>
+        </ol>
+    </aside>
+
+    <!-- RIGHT CONTENT: Scrollable Course Material -->
+    <main class="content-main">
+        <header>
+            <h1>Introduction To Brute-Force Attacks</h1>
+            <p class="subtitle">This modules focuses on brute-force and authentication attacks on web applications. Participants will use tools like Burp Suite to explore vulnerabilities in login mechanisms. The lab offers hands-on experience in testing password strength and analyzing authentication processes, teaching participants how to improve web application security against unauthorized access.</p>
+        </header>
+
+        <section id="module1" class="module-section">
+            <h2>Module 1: What is a Brute-Force Attack?</h2>
+            <p>A **brute-force attack** is the digital equivalent of trying every single key on a keychain until one fits the lock. In cybersecurity, it's a trial-and-error method used to guess login credentials, encryption keys, or hidden web pages.</p>
+            <p>The attacker systematically tries all possible combinations of letters, numbers, and symbols until the correct one is found. While it sounds simple, modern computers can perform thousands or even millions of guesses per second, making this a very real threat against weak passwords.</p>
+             <div class="info-card">
+                <div class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                </div>
+                <div>
+                    <h3>Analogy: The Combination Lock</h3>
+                    <p>Imagine a suitcase with a 3-digit combination lock. You've forgotten the code. A brute-force approach would be to start with 000, then try 001, 002, and so on, all the way to 999. It's tedious, but you are **guaranteed** to eventually find the correct combination.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="module2" class="module-section">
+            <h2>Module 2: Types of Brute-Force Attacks</h2>
+            <p>While the concept is simple, attackers use different strategies to speed up the process.</p>
+            <ul>
+                <li><strong>Simple Brute-Force Attack:</strong> This is the purest form, where the algorithm tries every single possible combination. This can be very slow for long passwords (e.g., `aaaa`, `aaab`, `aaac`...).</li>
+                <li><strong>Dictionary Attack:</strong> This is a much more efficient method. Instead of trying random combinations, the attacker uses a "dictionary"—a large list of common words, phrases, and previously leaked passwords. An attacker's dictionary might contain millions of the most commonly used passwords like `password123`, `123456`, `qwerty`, etc.</li>
+                <li><strong>Hybrid Brute-Force Attack:</strong> This combines a dictionary attack with simple brute-force logic. For example, it might take a word from a dictionary, like `password`, and then add numbers or symbols to it (`password1`, `password!`, `password2025`).</li>
+            </ul>
+        </section>
+
+        <section id="module3" class="module-section">
+            <h2>Module 3: Prevention Techniques</h2>
+            <p>Brute-force attacks only work when a system allows an attacker to make unlimited, rapid guesses. Strong defenses focus on making each guess difficult or limiting the number of attempts.</p>
+            <div class="info-card">
+                 <div>
+                    <h3>Key Defenses</h3>
+                    <ul>
+                        <li><strong>Strong Password Policies:</strong> Enforcing long passwords with a mix of uppercase letters, lowercase letters, numbers, and symbols makes a simple brute-force attack computationally impossible.</li>
+                        <li><strong>Rate Limiting:</strong> This is one of the most effective defenses. The system limits the number of login attempts that can be made from a single IP address in a given period (e.g., 5 failed attempts in 1 minute).</li>
+                        <li><strong>Account Lockout:</strong> After a certain number of failed attempts (e.g., 10), the account is temporarily locked, preventing any further guesses for a set time.</li>
+                        <li><strong>CAPTCHA:</strong> Requiring a user to solve a simple puzzle (like identifying images) after a few failed attempts proves they are a human, not an automated script.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <h3>Case Study: The GitHub Brute-Force Attack (2013)</h3>
+            <div class="info-card">
+                <div>
+                    <h3>The Attack</h3>
+                    <p>In 2013, GitHub, one of the world's largest code hosting platforms, was the target of a large-scale brute-force attack. Attackers used massive lists of usernames and passwords that had been leaked from other websites, a technique known as **credential stuffing**.</p>
+                    <h3>The Result</h3>
+                    <p>The attackers were successful in compromising a number of user accounts that had weak or reused passwords. This incident highlighted the real-world danger of brute-force attacks, even against major tech companies. In response, GitHub implemented much stronger security measures, including rate limiting and mandatory two-factor authentication, which are now standard across the industry.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="module4" class="module-section">
+            <h2>Module 4: Challenge Lab</h2>
+             <div class="info-card">
+                <div class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                </div>
+                <div>
+                    <h3>Your Goal</h3>
+                    <p>Now that you understand the theory, it's time to perform a brute-force attack yourself. You will be presented with a login portal that has no rate limiting. Your mission is to discover the correct credentials and gain access.</p>
+                </div>
+            </div>
+
+            <h3>How to Perform the Attack: A Step-by-Step Guide</h3>
+            <p>We will use **Burp Suite**, an industry-standard tool for web application security testing, to automate the attack.</p>
+            <ul>
+                <li><strong>Step 1: Intercept the Request.</strong> With Burp Suite running, turn on the proxy's "Intercept" feature. Go to the brute-force lab page in your browser and attempt to log in with any random username and password (e.g., `admin`/`test`). Burp will capture this login request before it reaches the server.</li>
+                <li><strong>Step 2: Send to Intruder.</strong> In Burp's Proxy tab, you will see the captured HTTP request. Right-click anywhere in the request and select "Send to Intruder."</li>
+                <li><strong>Step 3: Set Payload Positions.</strong> Go to the Intruder tab. In the "Positions" sub-tab, Burp will have automatically guessed which parts of the request to attack. We only want to attack the password. Click the "Clear §" button on the right to remove all default positions. Then, highlight the value of the password parameter (e.g., the word `test` that you typed) and click the "Add §" button. This tells Intruder that the password is the only part of the request we want to change.</li>
+                <li><strong>Step 4: Configure the Payload.</strong> Go to the "Payloads" sub-tab. Under "Payload type," select "Simple list." In the "Payload Options" box below, you can either paste a short list of common passwords or use the "Load" button to import a larger password list (like a file from SecLists or another wordlist).</li>
+                <li><strong>Step 5: Launch the Attack.</strong> Click the "Start attack" button in the top right. A new window will open, and Intruder will begin sending each password from your list to the server, one by one.</li>
+                <li><strong>Step 6: Analyze the Results.</strong> Watch the results table. Most attempts will have the same status code (e.g., 200 OK) and the same response length. The **correct password** will likely result in a different response, such as a different status code (like a 302 redirect) or a different response length. This anomaly indicates a successful login!</li>
+            </ul>
+
+            <div class="info-card">
+                <div>
+                    <p>Ready to try it yourself?</p>
+                    <div>
+                       <a href="{% url 'core:brute_force_lab' %}" class="challenge-button">Launch: Brute-Force Lab</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sections = document.querySelectorAll('.module-section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.4 });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Brute-Force Lab{% endblock %}
+
+{% block content %}
+<style>
+    .lab-container {
+        max-width: 450px;
+        margin: 4rem auto;
+        padding: 2.5rem;
+        background-color: rgba(10, 10, 10, 0.6);
+        border: 1px solid rgba(57, 255, 20, 0.2);
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+    }
+
+    .lab-container h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #39FF14; /* Neon Green */
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .lab-container p {
+        text-align: center;
+        color: #9CA3AF; /* Muted Gray */
+        margin-bottom: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        color: #F9FAFB;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .form-group input {
+        width: 100%;
+        background-color: rgba(10, 10, 10, 0.8);
+        border: 1px solid #374151;
+        color: #F9FAFB;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #39FF14;
+        box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+    }
+
+    .submit-btn {
+        width: 100%;
+        background-color: #6AFFAF; /* Mint Green */
+        color: #111827;
+        font-weight: bold;
+        padding: 0.75rem;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .submit-btn:hover {
+        background-color: #8BFFC8;
+    }
+
+    .error-message {
+        text-align: center;
+        color: #F87171; /* Red for errors */
+        margin-top: 1.5rem;
+        font-weight: 500;
+    }
+</style>
+
+<div class="lab-container">
+    <h1>Admin Panel Login</h1>
+    <p>Access is restricted. Authentication required.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" value="admin" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+
+        <button type="submit" class="submit-btn">> Authenticate</button>
+
+        {% if error %}
+            <div class="error-message">
+                <p>{{ error }}</p>
+            </div>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

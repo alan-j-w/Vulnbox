@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Profile | VulnBox{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* --- All your existing styles are perfect and unchanged --- */
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono&display=swap');
+    
+    :root {
+        --panel-bg: rgba(20, 20, 25, 0.6);
+        --border-color: rgba(57, 255, 20, 0.2);
+        --glow-color: rgba(57, 255, 20, 0.7);
+        --text-primary: #E5E7EB;
+        --text-secondary: #9CA3AF;
+        --accent-green: #39FF14;
+        --danger-red: #EF4444;
+        --danger-glow: rgba(239, 68, 68, 0.7);
+    }
+
+    .font-orbitron { font-family: 'Orbitron', sans-serif; }
+    #particles-js { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: -1; }
+    
+    .ui-panel {
+        background: var(--panel-bg); 
+        border: 1px solid var(--border-color); 
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px); 
+        border-radius: 12px; 
+        position: relative;
+    }
+
+    .main-header h1 {
+        font-family: 'Orbitron', sans-serif; 
+        font-size: 2.5rem; 
+        color: var(--text-primary);
+        text-shadow: 0 0 10px var(--glow-color); 
+        margin-bottom: 1rem;
+    }
+
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background-color: rgba(0, 0, 0, 0.7); 
+        backdrop-filter: blur(5px);
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        z-index: 1000;
+        opacity: 0; 
+        visibility: hidden; 
+        transition: opacity 0.3s, visibility 0.3s;
+    }
+    .modal-overlay.open { opacity: 1; visibility: visible; }
+
+    .modal-content {
+        background: var(--panel-bg); 
+        border: 1px solid var(--danger-red); 
+        border-radius: 12px;
+        padding: 2rem; 
+        max-width: 500px; 
+        width: 90%;
+        transform: scale(0.95); 
+        transition: transform 0.3s;
+    }
+    .modal-overlay.open .modal-content { transform: scale(1); }
+
+    .custom-file-upload {
+        border: 2px dashed var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: border-color 0.3s, background-color 0.3s;
+    }
+    .custom-file-upload:hover {
+        background-color: rgba(57, 255, 20, 0.05);
+        border-color: var(--glow-color);
+    }
+    .file-input-label {
+        color: var(--text-secondary);
+    }
+    .file-input-label strong {
+        color: var(--accent-green);
+    }
+    #file-name {
+        margin-top: 1rem;
+        font-family: 'Roboto Mono', monospace;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+    }
+    
+    .section-divider {
+        border-top: 1px solid var(--border-color);
+        margin: 2rem 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="particles-js"></div>
+
+<div class="max-w-4xl mx-auto px-4 py-8 text-white">
+    
+    {% if messages %}
+    <div class="mb-8">
+    {% for message in messages %}
+        {% if message.tags == 'success' %}
+        <div class="bg-green-500/20 border border-green-500 text-green-300 p-3 rounded-md text-sm" role="alert">
+            {{ message }}
+        </div>
+        {% elif message.tags == 'error' %}
+         <div class="bg-red-500/20 border border-red-500 text-red-300 p-3 rounded-md text-sm" role="alert">
+            {{ message }}
+        </div>
+        {% endif %}
+    {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="ui-panel p-6 sm:p-8">
+        
+        <div class="flex flex-col sm:flex-row items-center gap-8">
+            <div class="flex-shrink-0">
+                <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="w-40 h-40 rounded-full border-4 border-green-500/50 object-cover">
+            </div>
+            <div class="flex-grow w-full">
+                <header class="main-header mb-4">
+                    <h1 class="text-3xl sm:text-4xl text-center sm:text-left">{{ user.username }}</h1>
+                </header>
+                <div class="space-y-4 text-md">
+                    <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                        <span class="text-gray-400">Email</span>
+                        <span class="font-bold text-white">{{ user.email }}</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                        <span class="text-gray-400">Current Score</span>
+                        <span class="font-bold text-[var(--accent-green)]">{{ user.score }} PTS</span>
+                    </div>
+                    <!-- === START: THIS IS THE FIX === -->
+                    <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                        <span class="text-gray-400">Challenges Completed</span>
+                        <span class="font-bold text-white">{{ user.completed_challenges|length }}</span>
+                    </div>
+                    <!-- === END: THIS IS THE FIX === -->
+                    <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                        <span class="text-gray-400">Date Joined</span>
+                        <span class="font-bold text-white">{{ user.date_joined|date:"F j, Y" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="section-divider">
+
+        <div>
+            <h2 class="text-2xl font-orbitron font-bold text-gray-200 mb-6">Update Profile Picture</h2>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="hidden">{{ form.profile_picture }}</div>
+                <label for="id_profile_picture" class="custom-file-upload">
+                    <svg class="mx-auto h-10 w-10 text-gray-500" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    <p class="file-input-label mt-2 text-sm"><strong>Click to upload</strong> or drag and drop.</p>
+                    <p class="text-xs text-gray-500">PNG, JPG, GIF up to 2MB</p>
+                    <p id="file-name"></p>
+                </label>
+                <button type="submit" class="bg-green-600 text-black font-bold py-2 px-6 rounded-lg hover:bg-green-500 transition-colors mt-6">
+                    Upload New Picture
+                </button>
+            </form>
+        </div>
+
+        <hr class="section-divider">
+
+        <div>
+            <h2 class="text-2xl font-orbitron font-bold text-red-400 mb-3">Danger Zone</h2>
+            <p class="text-gray-400 mb-6">This action is permanent and cannot be undone. All your data and scores will be permanently erased.</p>
+            <button id="deleteBtn" class="bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-500 transition-colors">
+                Delete My Account
+            </button>
+        </div>
+
+    </div>
+
+    <div id="deleteModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="text-2xl font-bold text-red-400 mb-4">Confirm Account Deletion</h3>
+            <p class="text-gray-300 mb-6">Are you sure you want to delete your account? This is irreversible. Please enter your password to confirm.</p>
+            <form method="POST" action="{% url 'core:delete_account' %}">
+                {% csrf_token %}
+                <input type="password" name="password" placeholder="Enter your password" required class="w-full bg-gray-900 border border-gray-700 rounded-md p-2 text-white mb-6 focus:outline-none focus:ring-2 focus:ring-red-500">
+                <div class="flex justify-end gap-4">
+                    <button type="button" id="cancelBtn" class="bg-gray-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-500">Cancel</button>
+                    <button type="submit" class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-500">Confirm Deletion</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Modal JS remains the same
+        const deleteModal = document.getElementById('deleteModal');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+
+        if(deleteBtn) {
+            deleteBtn.addEventListener('click', () => {
+                deleteModal.classList.add('open');
+            });
+        }
+        if(cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                deleteModal.classList.remove('open');
+            });
+        }
+        if(deleteModal) {
+            deleteModal.addEventListener('click', (e) => {
+                if (e.target === deleteModal) {
+                    deleteModal.classList.remove('open');
+                }
+            });
+        }
+
+        const fileInput = document.getElementById('id_profile_picture');
+        const fileNameDisplay = document.getElementById('file-name');
+
+        if (fileInput) {
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files.length > 0) {
+                    fileNameDisplay.textContent = `Selected: ${this.files[0].name}`;
+                } else {
+                    fileNameDisplay.textContent = '';
+                }
+            });
+        }
+
+        particlesJS("particles-js", {"particles":{"number":{"value":80,"density":{"enable":true,"value_area":800}},"color":{"value":"#39FF14"},"shape":{"type":"circle"},"opacity":{"value":0.4,"random":true},"size":{"value":3,"random":true},"line_linked":{"enable":true,"distance":150,"color":"#39FF14","opacity":0.2,"width":1},"move":{"enable":true,"speed":2,"direction":"none","out_mode":"out"}},"interactivity":{"detect_on":"window","events":{"onhover":{"enable":true,"mode":"repulse"}},"modes":{"repulse":{"distance":100,"duration":0.4}}},"retina_detect":true});
+    });
+</script>
+{% endblock %}

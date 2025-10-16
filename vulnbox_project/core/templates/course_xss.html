@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+
+{% block title %}XSS Course | VulnBox{% endblock %}
+
+{% block content %}
+
+<style>
+    /* --- PROFESSIONAL LAYOUT WITH DASHBOARD COLOR THEME --- */
+    
+    :root {
+        --primary-green: #39FF14;
+        --accent-mint: #6AFFAF;
+        --background-main: #0A0A0A;
+        --background-card: rgba(10, 10, 10, 0.6);
+        --text-bright: #F9FAFB;
+        --text-muted: #9CA3AF;
+        --text-dark-on-mint: #111827;
+        --border-color: rgba(57, 255, 20, 0.2);
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--background-main);
+    }
+    
+    .course-layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 3rem;
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+
+    .task-sidebar {
+        position: sticky;
+        top: 100px;
+        align-self: start;
+    }
+
+    .task-sidebar ol {
+        list-style: none;
+        padding-left: 1.5rem;
+        position: relative;
+        border-left: 2px solid var(--border-color);
+    }
+    
+    .task-item a {
+        display: block;
+        position: relative;
+        padding: 1rem 0 1rem 2.5rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .task-item a::before {
+        content: counter(task-counter);
+        counter-increment: task-counter;
+        position: absolute;
+        left: -1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background-color: var(--background-main);
+        border: 2px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        transition: border-color 0.2s, color 0.2s;
+    }
+
+    .task-item a:hover { color: var(--text-bright); }
+    
+    .task-item a.active {
+        color: var(--primary-green);
+        font-weight: bold;
+    }
+    .task-item a.active::before {
+        border-color: var(--primary-green);
+        color: var(--primary-green);
+    }
+
+    .content-main h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-green);
+        margin-bottom: 0.5rem;
+    }
+    .content-main .subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 3rem; }
+
+    .module-section { margin-bottom: 3rem; padding-top: 2rem; }
+    .module-section h2 {
+        font-size: 1.8rem; font-weight: 600; color: var(--text-bright);
+        margin-bottom: 1.5rem;
+    }
+    .module-section h3 {
+        font-size: 1.3rem; font-weight: 600; color: var(--text-bright);
+        margin-top: 2rem; margin-bottom: 1rem;
+    }
+    .module-section p, .module-section li { font-size: 1rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 1rem; }
+    .module-section code {
+        background-color: var(--background-card); border: 1px solid var(--border-color);
+        color: #F3F4F6; padding: 0.2rem 0.5rem; border-radius: 4px;
+        font-family: 'Roboto Mono', monospace;
+    }
+    .module-section ul { list-style-type: disc; padding-left: 1.5rem; }
+
+    .info-card {
+        background-color: var(--background-card);
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        display: flex;
+        gap: 1.5rem;
+        align-items: flex-start;
+    }
+    .info-card .icon { color: var(--text-muted); flex-shrink: 0; }
+    .info-card h3 { font-size: 1.1rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.5rem; }
+
+    .challenge-button {
+        background-color: var(--accent-mint);
+        color: var(--text-dark-on-mint);
+        font-size: 1rem; padding: 0.7rem 1.5rem; border-radius: 8px;
+        transition: background-color 0.3s ease; text-decoration: none; display: inline-block;
+        margin: 0.5rem; font-weight: bold;
+    }
+    .challenge-button:hover { background-color: #8BFFC8; }
+</style>
+
+<div class="course-layout">
+    <!-- LEFT SIDEBAR: Task Navigation -->
+    <aside class="task-sidebar">
+        <ol style="counter-reset: task-counter;">
+            <li class="task-item"><a href="#module1" class="nav-link">What is XSS?</a></li>
+            <li class="task-item"><a href="#module2" class="nav-link">Types of XSS</a></li>
+            <li class="task-item"><a href="#module3" class="nav-link">The Impact</a></li>
+            <li class="task-item"><a href="#module4" class="nav-link">Challenge Lab</a></li>
+        </ol>
+    </aside>
+
+    <!-- RIGHT CONTENT: Scrollable Course Material -->
+    <main class="content-main">
+        <header>
+            <h1>Introduction to Cross-Site Scripting (XSS)</h1>
+            <p class="subtitle">Cross-site scripting (XSS) is one of the most persistent and dangerous web application vulnerabilities, often exploited to steal data, hijack sessions, or deface websites. To combat this, Content Security Policy (CSP) offers a powerful browser feature that allows developers to control the resources a web page is allowed to load and execute. This course is designed to equip security professionals and developers with practical knowledgehelping and helpingthem understand how to effectively defend against XSS attacks and enhance their web application security </p>
+        </header>
+
+        <section id="module1" class="module-section">
+            <h2>Module 1: What is Cross-Site Scripting (XSS)?</h2>
+            <p>**Cross-Site Scripting (XSS)** is a widespread vulnerability that allows an attacker to inject malicious client-side scripts (usually JavaScript) into web pages viewed by other users. Unlike SQL Injection, which targets the database, XSS targets the user's browser.</p>
+            <p>The vulnerability occurs when a web application takes user-supplied data and includes it in a response page without properly sanitizing it. The victim's browser, trusting the website, will execute the malicious script as if it were a legitimate part of the page.</p>
+        </section>
+
+        <section id="module2" class="module-section">
+            <h2>Module 2: Types of XSS</h2>
+            <p>There are three main types of XSS attacks, each with a different method of delivery.</p>
+            <ul>
+                <li><strong>Reflected XSS:</strong> The malicious script is part of the victim's request to the website. The server then "reflects" this script back to the user in the response. A common example is a search query where the search term is displayed on the results page. An attacker might craft a malicious link like <code>http://example.com/search?q=&lt;script&gt;alert('XSS')&lt;/script&gt;</code>.</li>
+                <li><strong>Stored XSS:</strong> This is the most dangerous type. The attacker's malicious script is permanently stored on the target server, such as in a database via a comment section or user profile. When any user visits the affected page, the server sends the script to their browser, and it executes.</li>
+                <li><strong>DOM-based XSS:</strong> This is a more modern variant where the entire attack happens on the client-side. The script is never sent to the server. Instead, the website's own legitimate JavaScript takes user input and writes it to the page's Document Object Model (DOM) in an unsafe way, causing a malicious script to be executed.</li>
+            </ul>
+        </section>
+
+        <section id="module3" class="module-section">
+            <h2>Module 3: The Impact of XSS</h2>
+            <p>While a simple <code>alert('XSS')</code> payload might seem harmless, a real XSS attack can be devastating. An attacker who can execute JavaScript in a victim's browser can steal session cookies, perform actions on behalf of the user, log keystrokes, and deface websites.</p>
+            
+            <h3>Case Study: The Fortnite Account Takeover (2019)</h3>
+            <div class="info-card">
+                <div>
+                    <h3>The Attack</h3>
+                    <p>Security researchers found a Reflected XSS vulnerability in a login page for the game Fortnite. They crafted a malicious link that, when clicked by a victim, would execute a script in their browser. This script silently stole the user's single sign-on (SSO) token—a type of session cookie—and sent it to the attacker's server.</p>
+                    <h3>The Result</h3>
+                    <p>With the stolen token, an attacker could gain complete control over a victim's Fortnite account without needing their password. They could access personal information, buy in-game currency with the victim's credit card, and listen in on in-game conversations. This case shows how even a simple Reflected XSS can lead to a full account takeover on a major, modern platform.</p>
+                </div>
+            </div>
+
+            <h3>Further Reading</h3>
+            <p>To find more real-world examples of XSS and other vulnerabilities, you can explore the public write-ups and disclosure reports on bug bounty platforms. These are excellent resources for learning how these attacks are found and exploited in the wild.</p>
+            <ul>
+                <li><a href="https://hackerone.com/hacktivity" target="_blank" class="text-green-400 hover:underline">HackerOne Hacktivity</a></li>
+              
+            </ul>
+        </section>
+
+        <section id="module4" class="module-section">
+            <h2>Module 4: Challenge Lab</h2>
+             <div class="info-card">
+                <div class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                </div>
+                <div>
+                    <h3>Your Goal</h3>
+                    <p>You have found a simple comment section on a blog. Your mission is to leave a comment containing a malicious script. If you are successful, an alert box will pop up on the page, proving you have achieved a Stored XSS attack.</p>
+                    <div>
+                        <a href="{% url 'core:xss_lab' %}" class="challenge-button">Launch: XSS Lab</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sections = document.querySelectorAll('.module-section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.4 });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+    });
+</script>
+
+{% endblock %}

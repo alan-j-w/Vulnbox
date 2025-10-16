@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Prompt Injection Lab{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Reusing some styles from the AI assistant for consistency */
+    :root {
+        --accent-green: #39FF14;
+        --panel-bg: rgba(20, 20, 25, 0.85);
+        --border-color: rgba(57, 255, 20, 0.2);
+    }
+    .chat-window {
+        background-color: var(--panel-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        font-family: 'Inter', sans-serif;
+        height: 600px;
+    }
+    .chat-header { padding: 1rem; border-bottom: 1px solid var(--border-color); text-align: center; }
+    .chat-header h3 { color: var(--accent-green); font-weight: bold; font-size: 1.2rem; margin: 0; }
+    .chat-messages { flex-grow: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; }
+    .chat-message { padding: 0.75rem 1rem; border-radius: 10px; max-width: 85%; line-height: 1.5; color: #E5E7EB; }
+    .chat-message.user { background-color: rgba(57, 255, 20, 0.1); align-self: flex-end; }
+    .chat-message.ai { background-color: rgba(100, 116, 139, 0.1); align-self: flex-start; }
+    .chat-input-area { border-top: 1px solid var(--border-color); padding: 1rem; display: flex; gap: 0.5rem; }
+    #chat-input { flex-grow: 1; background-color: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-color); color: white; padding: 0.75rem; border-radius: 8px; outline: none; }
+    #chat-input:focus { border-color: var(--accent-green); }
+    #chat-send { background-color: var(--accent-green); border: none; color: black; font-weight: bold; padding: 0 1rem; border-radius: 8px; cursor: pointer; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-2xl mx-auto text-center">
+    <div class="chat-window">
+        <div class="chat-header">
+            <h3>Secret Keeper AI</h3>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <!-- Chat history will be populated by JavaScript -->
+            {% for message in chat_history %}
+                <div class="chat-message {{ message.sender }}">{{ message.text }}</div>
+            {% endfor %}
+        </div>
+        <div class="chat-input-area">
+            <form method="POST" class="w-full flex gap-2">
+                {% csrf_token %}
+                <input type="text" id="chat-input" name="user_prompt" placeholder="Ask a question..." autocomplete="off" class="flex-grow">
+                <button id="chat-send" type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Scroll to the bottom of the chat on page load
+    const chatMessages = document.getElementById('chat-messages');
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+</script>
+{% endblock %}

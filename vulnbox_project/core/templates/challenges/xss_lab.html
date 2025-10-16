@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}XSS Lab{% endblock %}
+
+{% block content %}
+<style>
+    .lab-container {
+        max-width: 800px;
+        margin: 4rem auto;
+    }
+
+    .lab-container h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #39FF14; /* Neon Green */
+        margin-bottom: 0.5rem;
+    }
+
+    .lab-container .scenario {
+        color: #9CA3AF; /* Muted Gray */
+        margin-bottom: 2.5rem;
+    }
+
+    /* Comment Form Styling */
+    .comment-form {
+        background-color: rgba(10, 10, 10, 0.6);
+        border: 1px solid rgba(57, 255, 20, 0.2);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2.5rem;
+    }
+    .form-group { margin-bottom: 1.5rem; }
+    .form-group textarea {
+        width: 100%;
+        min-height: 120px;
+        background-color: rgba(10, 10, 10, 0.8);
+        border: 1px solid #374151;
+        color: #F9FAFB;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #39FF14;
+        box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+    }
+    .submit-btn {
+        width: 100%;
+        background-color: #6AFFAF; /* Mint Green */
+        color: #111827;
+        font-weight: bold;
+        padding: 0.75rem;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    .submit-btn:hover { background-color: #8BFFC8; }
+
+    /* Displayed Comments Styling */
+    .comments-section h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #374151;
+    }
+    .comment {
+        background-color: rgba(10, 10, 10, 0.4);
+        border: 1px solid #374151;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    .comment-author {
+        font-weight: bold;
+        color: #39FF14;
+        margin-bottom: 0.5rem;
+    }
+    .comment-body {
+        color: #9CA3AF;
+        line-height: 1.6;
+    }
+</style>
+
+<div class="lab-container">
+    <h1>Stored XSS Challenge</h1>
+    <p class="scenario">Leave a comment below. The system does not properly sanitize user input. Can you inject a script that creates an alert pop-up?</p>
+
+    <div class="comment-form">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <textarea name="comment" placeholder="Write your comment here..."></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Post Comment</button>
+        </form>
+    </div>
+
+    <div class="comments-section">
+        <h2>Comments</h2>
+        {% for comment in comments %}
+            <div class="comment">
+                <p class="comment-author">User</p>
+                <!-- The 'safe' filter tells Django to render this content as raw HTML, creating the vulnerability -->
+                <div class="comment-body">{{ comment|safe }}</div>
+            </div>
+        {% empty %}
+            <p class="text-gray-500">No comments yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

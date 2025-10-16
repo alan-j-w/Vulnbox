@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Disclaimer | VulnBox{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* --- CLEAN & MINIMAL STYLE OVERRIDES for a professional dark theme --- */
+    
+    body {
+        background-image: none !important;
+        background-color: #000000 !important; /* Professional dark blue-gray */
+        font-family: 'Inter', sans-serif !important;
+    }
+
+    header, footer {
+        background-color: #000000 !important;
+        border-color: #374151 !important;
+    }
+    header .text-glow, footer .text-glow {
+        color: #F9FAFB !important;
+        text-shadow: none !important;
+    }
+    header .button-glow {
+        display: none !important; /* Hide the glowing signup button */
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-12 px-6">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-white">Disclaimer</h1>
+        <p class="text-gray-400 mt-2">Last updated: {% now "F j, Y" %}</p>
+    </div>
+
+    <!-- The 'prose-invert' class styles all child elements for a dark background -->
+    <div class="prose prose-lg max-w-none prose-invert">
+        <p>The information provided by VulnBox ("we," "us," or "our") on this website is for general educational purposes only. All information on the Site is provided in good faith; however, we make no representation or warranty of any kind, express or implied, regarding the accuracy, adequacy, validity, reliability, availability, or completeness of any information on the Site.</p>
+
+        <h2>1. Educational Purpose Only</h2>
+        <p>VulnBox is a cybersecurity training platform designed exclusively for educational purposes. The labs, challenges, and content are intended to help users learn about and understand cybersecurity vulnerabilities in a safe, controlled, and legal environment. The skills learned here should be used ethically and responsibly to improve security, not to cause harm.</p>
+        
+        <h2>2. No Professional Advice</h2>
+        <p>The information on this website is not intended as, and shall not be understood or construed as, professional advice. The content is for informational and educational purposes only and does not constitute professional security advice. You should consult with a licensed professional for any security concerns regarding your own systems.</p>
+
+        <h2>3. Use At Your Own Risk</h2>
+        <p>Under no circumstance shall we have any liability to you for any loss or damage of any kind incurred as a result of the use of the site or reliance on any information provided on the site. Your use of the site and your reliance on any information on the site is solely at your own risk. All actions and activities conducted in the labs are your own responsibility.</p>
+        
+        <h2>4. No Warranty</h2>
+        <p>The Site is provided on an "as is" and "as available" basis. We make no warranties of any kind, express or implied, as to the operation of the site or the information, content, or materials included on the site. You expressly agree that your use of the site is at your sole risk.</p>
+    </div>
+</div>
+{% endblock %}
+

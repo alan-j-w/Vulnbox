@@ -1,0 +1,170 @@
+<style>
+    /* All your existing styles for the chat widget are perfect and unchanged */
+    :root {
+        --accent-green: #39FF14;
+        --panel-bg: rgba(20, 20, 25, 0.85);
+        --border-color: rgba(57, 255, 20, 0.2);
+    }
+    #ai-chat-widget {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
+    #chat-toggle {
+        background-color: var(--accent-green);
+        color: black;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(57, 255, 20, 0.4);
+        transition: transform 0.2s ease;
+    }
+    #chat-toggle:hover {
+        transform: scale(1.1);
+    }
+    #chat-window {
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        width: 370px;
+        height: 500px;
+        background-color: var(--panel-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transform: scale(0.95);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+        font-family: 'Inter', sans-serif;
+    }
+    #chat-window.open {
+        transform: scale(1);
+        opacity: 1;
+        visibility: visible;
+    }
+    .chat-header { padding: 1rem; border-bottom: 1px solid var(--border-color); text-align: center; }
+    .chat-header h3 { color: var(--accent-green); font-weight: bold; font-size: 1.2rem; margin: 0; }
+    .chat-messages { flex-grow: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; }
+    .chat-message { padding: 0.75rem 1rem; border-radius: 10px; max-width: 85%; line-height: 1.5; color: #E5E7EB; }
+    .chat-message.user { background-color: rgba(57, 255, 20, 0.1); align-self: flex-end; }
+    .chat-message.ai { background-color: rgba(100, 116, 139, 0.1); align-self: flex-start; }
+    .chat-input-area { border-top: 1px solid var(--border-color); padding: 1rem; display: flex; gap: 0.5rem; }
+    #chat-input { flex-grow: 1; background-color: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-color); color: white; padding: 0.75rem; border-radius: 8px; outline: none; }
+    #chat-input:focus { border-color: var(--accent-green); }
+    #chat-send { background-color: var(--accent-green); border: none; color: black; font-weight: bold; padding: 0 1rem; border-radius: 8px; cursor: pointer; }
+</style>
+
+<div id="ai-chat-widget">
+    <div id="chat-window">
+        <div class="chat-header">
+            <h3>VulnBot Assistant</h3>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="chat-message ai">Hi! I'm VulnBot. Ask me about cybersecurity concepts or for hints on challenges.</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
+            <button id="chat-send">Send</button>
+        </div>
+    </div>
+    <button id="chat-toggle">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.94-.416-1.258a5.942 5.942 0 01-1.232-3.098 5.968 5.968 0 012.188-5.366A9.764 9.764 0 0112 3.75c4.97 0 9 3.694 9 8.25z" />
+        </svg>
+    </button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // === START: THIS IS THE FIX ===
+    const chatWidget = document.getElementById('ai-chat-widget');
+    // Check if the current page is the prompt injection lab
+    if (window.location.pathname.includes('/lab/prompt-injection/')) {
+        // If it is, hide the floating VulnBot widget and do nothing else.
+        if(chatWidget) chatWidget.style.display = 'none';
+        return; // Stop the rest of the script from running
+    }
+    // === END: THIS IS THE FIX ===
+
+    // The rest of the code is the same, but it will now only run on pages
+    // that are NOT the prompt injection lab.
+    const chatWindow = document.getElementById('chat-window');
+    const chatToggle = document.getElementById('chat-toggle');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const chatSend = document.getElementById('chat-send');
+    const aiApiUrl = "{% url 'core:ask_ai' %}";
+
+    if (chatToggle) {
+        chatToggle.addEventListener('click', () => {
+            chatWindow.classList.toggle('open');
+        });
+    }
+
+    const addMessage = (text, sender) => {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${sender}`;
+        messageDiv.textContent = text;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    };
+
+    const handleSend = async () => {
+        const question = chatInput.value.trim();
+        if (!question) return;
+
+        addMessage(question, 'user');
+        chatInput.value = '';
+        addMessage('VulnBot is thinking...', 'ai');
+
+        try {
+            const response = await fetch(aiApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ question: question })
+            });
+
+            chatMessages.removeChild(chatMessages.lastChild);
+            
+            if (!response.ok) {
+                addMessage('Sorry, an error occurred while getting a response.', 'ai');
+                return;
+            }
+
+            const data = await response.json();
+            addMessage(data.answer, 'ai');
+
+        } catch (error) {
+            chatMessages.removeChild(chatMessages.lastChild);
+            addMessage('Failed to connect to the AI assistant. Please check your connection.', 'ai');
+            console.error("AI Fetch Error:", error);
+        }
+    };
+
+    if (chatSend) {
+        chatSend.addEventListener('click', handleSend);
+    }
+    if (chatInput) {
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleSend();
+            }
+        });
+    }
+});
+</script>
+

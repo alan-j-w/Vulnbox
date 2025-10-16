@@ -1,0 +1,43 @@
+{% extends 'auth/base_auth.html' %}
+
+{% block title %}Login | VulnBox{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-md bg-black/70 p-8 border-2 border-green-500/50 rounded-xl backdrop-blur-sm">
+    <h2 class="text-3xl font-bold text-center text-green-400 mb-6">Login</h2>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+            <div class="bg-red-500/20 border border-red-500 text-red-300 p-3 rounded-md mb-4 text-sm">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="mb-4">
+            <!-- CHANGE: The label is now "Email" -->
+            <label for="id_username" class="block mb-2 text-sm font-bold">Email</label>
+            <!-- NOTE: The input name remains 'username'. This is required by AuthenticationForm. -->
+            <input type="email" name="username" id="id_username" class="w-full bg-gray-900/50 border-2 border-green-700 rounded-md p-2 text-white focus:outline-none focus:ring-2 focus:ring-green-400 transition-all" autocomplete="email">
+        </div>
+
+        <div class="mb-6">
+            <label for="id_password" class="block mb-2 text-sm font-bold">Password</label>
+            <input type="password" name="password" id="id_password" class="w-full bg-gray-900/50 border-2 border-green-700 rounded-md p-2 text-white focus:outline-none focus:ring-2 focus:ring-green-400 transition-all" autocomplete="current-password">
+        </div>
+
+        <div class="mb-6">
+            <button type="submit" class="w-full bg-green-400 text-black font-bold py-2 px-4 rounded-lg hover:bg-green-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-green-300 transition-colors">
+                > Access System
+            </button>
+        </div>
+
+        <p class="text-center text-sm text-green-400/70">
+            Need an account? <a href="{% url 'authapp:signup' %}" class="font-bold text-cyan-400 hover:underline">Establish Connection</a>
+        </p>
+    </form>
+</div>
+{% endblock %}

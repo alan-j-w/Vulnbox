@@ -1,0 +1,266 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Server-Side Template Injection Course{% endblock %}
+
+{% block extra_head %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<style>
+    /* --- UI Styles based on the SQL Course Model --- */
+    :root {
+        --primary-green: #39FF14;
+        --background-main: #0A0A0A;
+        --background-card: rgba(10, 10, 10, 0.6);
+        --text-bright: #F9FAFB;
+        --text-muted: #9CA3AF;
+        --border-color: rgba(57, 255, 20, 0.2);
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--background-main);
+    }
+    
+    .course-layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 3rem;
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+
+    .task-sidebar {
+        position: sticky;
+        top: 100px;
+        align-self: start;
+    }
+
+    .task-sidebar ol {
+        list-style: none;
+        padding-left: 1.5rem;
+        position: relative;
+        border-left: 2px solid var(--border-color);
+        counter-reset: task-counter;
+    }
+    
+    .task-item a {
+        display: block;
+        position: relative;
+        padding: 1rem 0 1rem 2.5rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .task-item a::before {
+        content: counter(task-counter);
+        counter-increment: task-counter;
+        position: absolute;
+        left: -1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background-color: var(--background-main);
+        border: 2px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        transition: border-color 0.2s, color 0.2s;
+    }
+
+    .task-item a:hover { color: var(--text-bright); }
+    
+    .task-item a.active {
+        color: var(--primary-green);
+        font-weight: bold;
+    }
+    .task-item a.active::before {
+        border-color: var(--primary-green);
+        color: var(--primary-green);
+    }
+
+    .content-main h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-green);
+        margin-bottom: 0.5rem;
+    }
+    .content-main .subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 3rem; }
+
+    .module-section { margin-bottom: 3rem; padding-top: 2rem; }
+    .module-section h2 {
+        font-size: 1.8rem; font-weight: 600; color: var(--text-bright);
+        margin-bottom: 1.5rem;
+    }
+    .module-section p, .module-section li { font-size: 1rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 1rem; }
+    .module-section code {
+        background-color: var(--background-card); border: 1px solid var(--border-color);
+        color: #F3F4F6; padding: 0.2rem 0.5rem; border-radius: 4px;
+        font-family: 'Roboto Mono', monospace;
+    }
+    .module-section ul { list-style-type: disc; padding-left: 1.5rem; }
+    .module-section pre { margin: 1.5rem 0; background-color: #1a1a1a; padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); white-space: pre-wrap; font-family: 'Roboto Mono', monospace;}
+
+
+    .info-card {
+        background-color: var(--background-card);
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        display: flex;
+        gap: 1.5rem;
+        align-items: flex-start;
+    }
+    .info-card .icon { color: var(--text-muted); flex-shrink: 0; }
+    .info-card h3 { font-size: 1.1rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.5rem; }
+
+    .challenge-button {
+        background-color: var(--primary-green);
+        color: #000;
+        font-size: 1rem; padding: 0.7rem 1.5rem; border-radius: 8px;
+        transition: background-color 0.3s ease; text-decoration: none; display: inline-block;
+        font-weight: bold;
+    }
+    .challenge-button:hover { background-color: #8aff78; }
+
+    @media (max-width: 992px) {
+        .course-layout {
+            grid-template-columns: 1fr;
+        }
+        .task-sidebar {
+            position: static;
+            margin-bottom: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="course-layout">
+    <aside class="task-sidebar">
+        <ol>
+            <li class="task-item"><a href="#module1" class="nav-link">What is a Template Engine?</a></li>
+            <li class="task-item"><a href="#module2" class="nav-link">The Birth of a Vulnerability</a></li>
+            <li class="task-item"><a href="#module3" class="nav-link">Challenge Lab</a></li>
+        </ol>
+    </aside>
+
+    <main class="content-main">
+        <header>
+            <h1>Introduction to SSTI</h1>
+            <p class="subtitle">Discover how mishandled user input in web templates can lead to full-blown remote code execution on the server.</p>
+        </header>
+
+        <section id="module1" class="module-section">
+            <h2>Module 1: What is a Template Engine?</h2>
+            <p>At its core, a template engine is a tool that allows developers to separate application logic from presentation. It processes templates—HTML files with special placeholders—and injects dynamic data into them before sending the final page to the user.</p>
+            <p>For example, instead of hard-coding a username, a developer uses a placeholder:</p>
+            <pre><code class="language-django">
+&lt;h1&gt;Welcome, {% templatetag openvariable %} user.username {% templatetag closevariable %}!&lt;/h1&gt;
+            </code></pre>
+            <p>The engine replaces <code>{% templatetag openvariable %} user.username {% templatetag closevariable %}</code> with the actual logged-in user's name, like "Alice", resulting in clean, dynamic HTML.</p>
+        </section>
+
+        <section id="module2" class="module-section">
+            <h2>Module 2: The Birth of a Vulnerability</h2>
+            <p>Server-Side Template Injection occurs when user-controlled input is mistakenly treated as part of the template itself. This critical error happens if the input is directly concatenated into the template string before it's rendered by the engine.</p>
+            <p>Consider this dangerously flawed Python code using Django's template engine:</p>
+            {% verbatim %}
+            <pre><code class="language-python">
+from django.template import Template, Context
+from django.http import HttpResponse
+
+def unsafe_view(request):
+    user_name = request.GET.get('name')
+    # VULNERABLE: User input is placed directly in the template string
+    template_string = f"<h1>Hello, {user_name}!</h1>"
+    template = Template(template_string)
+    return HttpResponse(template.render(Context()))
+            </code></pre>
+            {% endverbatim %}
+            <p>A simple test is to try to execute math. However, sometimes direct operators like <code>*</code> are blocked. A more robust payload uses the built-in <code>widthratio</code> tag. If an attacker submits <code>{% templatetag openblock %} widthratio 7 1 7 {% templatetag closeblock %}</code>, the engine calculates (7/1)*7 and renders "49", confirming the vulnerability.</p>
+            
+            <div class="info-card">
+                <div class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                </div>
+                <div>
+                    <h3>Potential Impact: Remote Code Execution (RCE)</h3>
+                    <p>SSTI is far more dangerous than simple math. A skilled attacker can craft payloads to access the underlying objects and methods of the programming language. This can lead to:</p>
+                    <ul>
+                        <li>Reading sensitive files from the server (e.g., <code>/etc/passwd</code>).</li>
+                        <li>Executing arbitrary commands on the server, leading to a full system compromise.</li>
+                        <li>Exposing secret keys, database credentials, and other internal application data.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="module3" class="module-section">
+            <h2>Module 3: Challenge Lab</h2>
+            <div class="info-card">
+                <div class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                </div>
+                <div>
+                    <h3>Your Goal</h3>
+                    <p>You have learned the theory. Now it's time to exploit a real SSTI vulnerability in our simulated lab environment. Your mission is to confirm the vulnerability by successfully executing a simple mathematical expression.</p>
+                    <div>
+                        <a href="{% url 'core:ssti_lab' %}" class="challenge-button">Launch: SSTI Lab</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sections = document.querySelectorAll('.module-section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        // Smooth scrolling for nav links
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer to highlight the active link on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.4 });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/plugins/autoloader/prism-autoloader.min.js"></script>
+{% endblock %}
+

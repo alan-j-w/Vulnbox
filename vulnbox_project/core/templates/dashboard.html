@@ -1,0 +1,296 @@
+{% extends 'base.html' %}
+
+{% block title %}Web Exploitation Training | VulnBox{% endblock %}
+
+{# --- OVERRIDE HEADER LINKS --- #}
+{% block navigation_links %}
+    <div class="flex items-center justify-end flex-1 space-x-6 font-bold text-gray-300">
+        <div class="flex items-center gap-4">
+            <span class="hidden sm:inline">Welcome, <strong class="text-white">{{ user.username }}</strong></span>
+
+              <!-- SCORE DISPLAY -->
+            <div class="flex items-center gap-2 text-lg text-[var(--accent-green)]" style="text-shadow: 0 0 6px var(--glow-color);">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                    <path fill-rule="evenodd" d="M15.5 3A2.5 2.5 0 0013 5.5V6h-6V5.5A2.5 2.5 0 004.5 3h-1A1.5 1.5 0 002 4.5v1.25a.75.75 0 001.5 0V5.26a2.492 2.492 0 00.528 1.488l2.222 3.11A.75.75 0 009 10.5h2a.75.75 0 00.75-.642l2.222-3.11a2.492 2.492 0 00.528-1.488V4.5a.75.75 0 001.5 0V4.5A1.5 1.5 0 0016.5 3h-1zM9.5 7.5a.5.5 0 01.5.5v1a.5.5 0 01-1 0v-1a.5.5 0 01.5-.5zM6 12a1 1 0 00-1 1v1.5a1.5 1.5 0 001.5 1.5h1.5a1 1 0 001-1V13a1 1 0 00-1-1H6zM14 12a1 1 0 00-1 1v1.5a1.5 1.5 0 001.5 1.5h1.5a1 1 0 001-1V13a1 1 0 00-1-1h-2z" clip-rule="evenodd" />
+                </svg>
+                <span class="font-bold font-orbitron">{{ user.score }} PTS</span>
+            </div>
+        </div>
+        
+        
+        <button class="hamburger-menu" id="menuBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+        </button>
+    </div>
+{% endblock navigation_links %}
+
+{% block extra_head %}
+<style>
+    /* --- Your existing styles are perfect, no changes needed --- */
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;500&display=swap');
+    :root {
+        --panel-bg: rgba(20, 20, 25, 0.6);
+        --border-color: rgba(57, 255, 20, 0.2);
+        --glow-color: rgba(57, 255, 20, 0.7);
+        --text-primary: #E5E7EB;
+        --text-secondary: #9CA3AF;
+        --accent-green: #39FF14;
+    }
+    .font-orbitron { font-family: 'Orbitron', sans-serif; }
+    #particles-js { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: -1; }
+    .sidebar {
+        background-color: var(--panel-bg); border-left: 1px solid var(--border-color); backdrop-filter: blur(10px);
+        width: 280px; position: fixed; top: 0; right: -280px; height: 100%; z-index: 100;
+        transition: right 0.3s ease-in-out; display: flex; flex-direction: column;
+    }
+    .sidebar.open { right: 0; }
+    .sidebar-header {
+        font-family: 'Orbitron', sans-serif; padding: 1.5rem; font-size: 1.5rem; font-weight: 800;
+        color: var(--text-primary); text-align: center; border-bottom: 1px solid var(--border-color);
+        text-shadow: 0 0 8px var(--glow-color);
+    }
+    .sidebar-nav { padding: 1rem; flex-grow: 1; }
+    .sidebar-nav a {
+        display: flex; align-items: center; gap: 1rem; color: var(--text-secondary);
+        padding: 0.85rem 1rem; border-radius: 8px; text-decoration: none; font-weight: 500;
+        margin-bottom: 0.5rem; transition: background-color 0.2s, color 0.2s;
+    }
+    .sidebar-nav a:hover, .sidebar-nav a.active { background-color: rgba(57, 255, 20, 0.1); color: var(--text-primary); }
+    .sidebar-nav a svg { width: 24px; height: 24px; }
+    .ui-panel {
+        background: var(--panel-bg); border: 1px solid var(--border-color); backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px); border-radius: 12px; position: relative;
+    }
+    .ui-panel::before, .ui-panel::after {
+        content: ''; position: absolute; width: 12px; height: 12px; border-style: solid; border-color: var(--glow-color);
+    }
+    .ui-panel::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; border-radius: 12px 0 0 0; }
+    .ui-panel::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; border-radius: 0 0 12px 0; }
+    .main-header h1 {
+        font-family: 'Orbitron', sans-serif; font-size: 2.5rem; color: var(--text-primary);
+        text-shadow: 0 0 10px var(--glow-color); margin-bottom: 1rem;
+    }
+    .intro-text { color: var(--text-secondary); margin-bottom: 2rem; max-width: 80ch; }
+    .mission-table { width: 100%; border-collapse: collapse; }
+    .mission-table th, .mission-table td { padding: 1.25rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+    .mission-table th {
+        font-family: 'Orbitron', sans-serif; color: var(--text-primary); text-transform: uppercase;
+        font-size: 0.9rem; letter-spacing: 1px;
+    }
+    .mission-table td { color: var(--text-primary); }
+    .mission-table tbody tr { transition: background-color 0.2s; }
+    .mission-table tbody tr:hover { background-color: rgba(57, 255, 20, 0.05); }
+    .mission-table tbody tr:last-child td { border-bottom: none; }
+    .mission-title { font-weight: 700; font-size: 1.1rem; }
+    .mission-category-row td {
+        padding-top: 2.5rem; font-size: 1.5rem; font-weight: 700; color: var(--text-primary);
+        border-bottom: 2px solid var(--border-color);
+    }
+    .launch-button {
+        background-color: var(--accent-green); color: #000; text-align: center; padding: 0.6rem 1.2rem;
+        border-radius: 8px; text-decoration: none; font-weight: 700;
+        transition: all 0.2s;
+        border: 1px solid var(--accent-green); white-space: nowrap;
+    }
+    .launch-button:hover { background-color: transparent; color: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); }
+    .launch-button-locked {
+        background-color: transparent; border-color: #4B5563; color: #6B7280; cursor: not-allowed;
+    }
+    .launch-button-locked:hover { background-color: transparent; color: #6B7280; box-shadow: none; }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div id="particles-js"></div>
+
+<!-- Main Content Panel (This part is unchanged) -->
+<div class="p-4 sm:p-8 max-w-7xl mx-auto w-full">
+    <div class="ui-panel p-6 sm:p-8">
+        <header class="main-header">
+            <h1>WEB EXPLOITATION TRAINING MODULES</h1>
+        </header>
+        <p class="intro-text">Welcome to the VulnBox training ground. We recommend starting with the Foundational Skills to build a strong base before moving on to more advanced topics.</p>
+        
+        <div class="overflow-x-auto">
+            <table class="mission-table w-full">
+                <!-- Table content is unchanged -->
+                 <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="mission-category-row">
+                        <td colspan="3">Foundational Skills</td>
+                    </tr>
+                    <tr>
+                        <td class="mission-title">SQL Injection</td>
+                        <td>Learn how attackers exploit database queries to bypass security.</td>
+                        <td><a href="{% url 'core:course_sql' %}" class="launch-button">Begin Course</a></td>
+                    </tr>
+                    <tr>
+                        <td class="mission-title">Brute-Force Attacks</td>
+                        <td>Understand the classic method of guessing credentials.</td>
+                        <td><a href="{% url 'core:course_brute_force' %}" class="launch-button">Begin Course</a></td>
+                    </tr>
+                    <tr>
+                        <td class="mission-title">Cryptography</td>
+                        <td>Dive into ciphers and exploit common cryptographic flaws.</td>
+                        <td><a href="{% url 'core:course_cryptography' %}" class="launch-button">Begin Course</a></td>
+                    </tr>
+                    <tr>
+                        <td class="mission-title">Cross-Site Scripting (XSS)</td>
+                        <td>Discover how attackers inject malicious scripts into websites.</td>
+                        <td><a href="{% url 'core:course_xss' %}" class="launch-button">Begin Course</a></td>
+                    </tr>
+                    <tr>
+                        <td class="mission-title">Cross-Site Request Forgery (CSRF)</td>
+                        <td>Understand how attackers trick authenticated users into performing unwanted actions.</td>
+                        <td><a href="{% url 'core:course_csrf' %}" class="launch-button">Begin Course</a></td>
+                    </tr>
+    
+                    <tr class="mission-category-row">
+                        <td colspan="3">Advanced Web Exploitation</td>
+                    </tr>
+                    <tr>
+                        <td class="mission-title">NoSQL Injection</td>
+                        <td>Target modern databases like MongoDB by exploiting weaknesses.</td>
+                        <td><a href="{% url 'core:course_nosql' %}" class="launch-button">Begin Course</a></td>
+                    </tr>
+                  <tr>
+                        <td class="mission-title">Server-Side Template Injection</td>
+                        <td>A high-impact vulnerability that can lead to RCE.</td>
+                        <td><a href="{% url 'core:course_ssti' %}" class="launch-button">Begin Course</a></td>
+                 </tr>
+                    <tr>
+                        <td class="mission-title">Command Injection</td>
+                        <td>Trick a server into running arbitrary system commands.</td>
+                        <td><a href="{% url 'core:course_command_injection' %}" class="launch-button">Begin Course</a></td>
+                    </tr>
+    
+                    <tr class="mission-category-row">
+                        <td colspan="3">Cutting-Edge Threats (AI Era)</td>
+                    </tr>
+                     <tr>
+                        <td class="mission-title">Prompt Injection</td>
+                        <td>Craft malicious prompts to trick LLMs into ignoring safety filters.</td>
+                        <td><a href="{% url 'core:course_prompt_injection' %}" class="launch-button">Begin Course</a></td>
+                    </tr>
+                    <tr>
+                        <td class="mission-title">Data Poisoning</td>
+                        <td>Corrupt an AI's training process by feeding it malicious data.</td>
+                        <td><a href="{% url 'core:course_data_poisoning' %}" class="launch-button">Begin Course</a></td>
+                    </tr>
+                    <tr>
+                        <td class="mission-title">Model Theft</td>
+                        <td>Learn techniques to steal proprietary AI models.</td>
+                        <td><a href="{% url 'core:course_model_theft' %}" class="launch-button">Begin Course</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">VULNBOX</div>
+
+<!-- === START: CORRECTED USER INFO PANEL === -->
+<div class="p-4 border-b border-[var(--border-color)] flex flex-col items-center text-center">
+    <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="w-24 h-24 rounded-full border-2 border-green-500/50 object-cover mb-3">
+    <h3 class="font-bold text-lg text-white truncate w-full">{{ user.username }}</h3>
+    <p class="text-sm font-bold text-green-400 font-orbitron">{{ user.score }} PTS</p>
+</div>
+<!-- === END: CORRECTED USER INFO PANEL === -->
+
+    <nav class="sidebar-nav">
+        <a href="{% url 'core:dashboard' %}" class="active">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"></path></svg>
+            Dashboard
+        </a>
+
+
+        
+       <a href="{% url 'core:profile' %}">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+            Profile
+        </a>
+      <a href="{% url 'core:community_hub' %}">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m-7.5-2.962A3 3 0 013 11.175V6.75a3 3 0 013-3h9a3 3 0 013 3v.026M9 12.75a3 3 0 100-6 3 3 0 000 6z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.75a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Community
+        </a>
+
+         <a href="{% url 'core:submit_flag' %}">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0 016.208.682l.108.054a9 9 0 006.086.71l3.114-.732a48.524 48.524 0 01-.005-10.499l-3.11.732a9 9 0 01-6.085-.711l-.108-.054a9 9 0 00-6.208-.682L3 4.5M3 15V4.5" /></svg>
+            Submit Flag
+        </a>
+
+        <a href="{% url 'core:leaderboard' %}">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"></path></svg>
+            Leaderboard
+        </a>
+
+        <a href="{% url 'core:exam_list' %}">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-6.75c-.622 0-1.125.504-1.125 1.125V18.75m9 0h-9" />
+            </svg>
+            Exams
+        </a>
+
+        <a href="{% url 'authapp:logout' %}">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"></path></svg>
+            Logout
+        </a>
+    </nav>
+</aside>
+{% endblock %}
+
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+    // This Javascript is unchanged and correct
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('open');
+        });
+
+        document.body.addEventListener('click', (e) => {
+            if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#39FF14" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.4, "random": true },
+                "size": { "value": 3, "random": true },
+                "line_linked": { 
+                    "enable": true, "distance": 150, "color": "#39FF14", 
+                    "opacity": 0.2, "width": 1 
+                },
+                "move": { "enable": true, "speed": 2, "direction": "none", "out_mode": "out" }
+            },
+            "interactivity": { "detect_on": "window", "events": { "onhover": { "enable": true, "mode": "repulse" } },
+                "modes": { "repulse": { "distance": 100, "duration": 0.4 } }
+            },
+            "retina_detect": true
+        });
+    });
+</script>
+{% endblock %}
+

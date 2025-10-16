@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+
+{% block title %}NoSQL Injection Course | VulnBox{% endblock %}
+
+{% block content %}
+
+<style>
+    /* --- PROFESSIONAL LAYOUT WITH DASHBOARD COLOR THEME --- */
+    
+    :root {
+        --primary-green: #39FF14;
+        --accent-mint: #6AFFAF;
+        --background-main: #0A0A0A;
+        --background-card: rgba(10, 10, 10, 0.6);
+        --text-bright: #F9FAFB;
+        --text-muted: #9CA3AF;
+        --text-dark-on-mint: #111827;
+        --border-color: rgba(57, 255, 20, 0.2);
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--background-main);
+    }
+    
+    .course-layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 3rem;
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+
+    .task-sidebar {
+        position: sticky;
+        top: 100px;
+        align-self: start;
+    }
+
+    .task-sidebar ol {
+        list-style: none;
+        padding-left: 1.5rem;
+        position: relative;
+        border-left: 2px solid var(--border-color);
+    }
+    
+    .task-item a {
+        display: block;
+        position: relative;
+        padding: 1rem 0 1rem 2.5rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .task-item a::before {
+        content: counter(task-counter);
+        counter-increment: task-counter;
+        position: absolute;
+        left: -1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background-color: var(--background-main);
+        border: 2px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        transition: border-color 0.2s, color 0.2s;
+    }
+
+    .task-item a:hover { color: var(--text-bright); }
+    
+    .task-item a.active {
+        color: var(--primary-green);
+        font-weight: bold;
+    }
+    .task-item a.active::before {
+        border-color: var(--primary-green);
+        color: var(--primary-green);
+    }
+
+    .content-main h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-green);
+        margin-bottom: 0.5rem;
+    }
+    .content-main .subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 3rem; }
+
+    .module-section { margin-bottom: 3rem; padding-top: 2rem; }
+    .module-section h2 {
+        font-size: 1.8rem; font-weight: 600; color: var(--text-bright);
+        margin-bottom: 1.5rem;
+    }
+     .module-section h3 {
+        font-size: 1.3rem; font-weight: 600; color: var(--text-bright);
+        margin-top: 2rem; margin-bottom: 1rem;
+    }
+    .module-section p, .module-section li { font-size: 1rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 1rem; }
+    .module-section code {
+        background-color: var(--background-card); border: 1px solid var(--border-color);
+        color: #F3F4F6; padding: 0.2rem 0.5rem; border-radius: 4px;
+        font-family: 'Roboto Mono', monospace;
+    }
+    .module-section ul { list-style-type: disc; padding-left: 1.5rem; }
+
+    .info-card {
+        background-color: var(--background-card);
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        display: flex;
+        gap: 1.5rem;
+        align-items: flex-start;
+    }
+    .info-card .icon { color: var(--text-muted); flex-shrink: 0; }
+    .info-card h3 { font-size: 1.1rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.5rem; }
+
+    .challenge-button {
+        background-color: var(--accent-mint);
+        color: var(--text-dark-on-mint);
+        font-size: 1rem; padding: 0.7rem 1.5rem; border-radius: 8px;
+        transition: background-color 0.3s ease; text-decoration: none; display: inline-block;
+        margin: 0.5rem; font-weight: bold;
+    }
+    .challenge-button:hover { background-color: #8BFFC8; }
+</style>
+
+<div class="course-layout">
+    <!-- LEFT SIDEBAR: Task Navigation -->
+    <aside class="task-sidebar">
+        <ol style="counter-reset: task-counter;">
+            <li class="task-item"><a href="#module1" class="nav-link">What is NoSQL?</a></li>
+            <li class="task-item"><a href="#module2" class="nav-link">NoSQL Injection Explained</a></li>
+            <li class="task-item"><a href="#module3" class="nav-link">Prevention</a></li>
+            <li class="task-item"><a href="#module4" class="nav-link">Challenge Lab</a></li>
+        </ol>
+    </aside>
+
+    <!-- RIGHT CONTENT: Scrollable Course Material -->
+    <main class="content-main">
+        <header>
+            <h1>Introduction to NoSQL Injection</h1>
+            <p class="subtitle">Explore how to attack the modern databases that power today's web.</p>
+        </header>
+
+        <section id="module1" class="module-section">
+            <h2>Module 1: What is NoSQL?</h2>
+            <p>While traditional databases use SQL (Structured Query Language), a new generation of **NoSQL** (Not Only SQL) databases has become incredibly popular. Instead of the rigid tables and rows of a SQL database, NoSQL databases often store data in a more flexible format, like **JSON** (JavaScript Object Notation).</p>
+            <p>A common type of NoSQL database is a document database, like **MongoDB**. A user record in MongoDB might look like this:</p>
+            <code>{ "_id": 1, "username": "admin", "password": "password123", "isAdmin": true }</code>
+        </section>
+
+        <section id="module2" class="module-section">
+            <h2>Module 2: NoSQL Injection Explained</h2>
+            <p>NoSQL Injection is similar in principle to SQL Injection: it occurs when an application trusts user input and includes it directly in a database query. However, instead of injecting SQL commands, an attacker injects syntax that is specific to the NoSQL database's query language.</p>
+            <p>Many NoSQL databases, like MongoDB, use special query operators that begin with a `$` (e.g., `$ne` for "not equal", `$gt` for "greater than"). If an attacker can inject these operators into a query, they can manipulate its logic.</p>
+            <div class="info-card">
+                <div>
+                    <h3>The Attack: Operator Injection</h3>
+                    <p>Imagine a login form that queries the database like this: <code>db.users.findOne({ username: 'user_input', password: 'password_input' })</code></p>
+                    <p>A normal user would enter their username and password. But an attacker could enter their username and, for the password, they could try to inject a JSON object containing a query operator:</p>
+                    <p>Username: <code>admin</code><br>Password: <code>{ "$ne": " " }</code></p>
+                    <p>The backend, if vulnerable, would construct this query: <code>db.users.findOne({ username: 'admin', password: { '$ne': ' ' } })</code></p>
+                    <p>This query doesn't check if the password is correct. Instead, it asks the database to find a user named 'admin' whose password is **not equal to** a space. Since the admin's real password is not a space, the condition is true, and the attacker is logged in.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="module3" class="module-section">
+            <h2>Module 3: Prevention</h2>
+            <p>Preventing NoSQL injection involves similar principles to preventing SQLi. The key is to never trust user input and to avoid building queries with simple string concatenation.</p>
+            <ul>
+                <li><strong>Use a Sanitization Library:</strong> Use a library specifically designed to sanitize and validate user input against NoSQL injection attacks before it's used in a query.</li>
+                <li><strong>Type Checking:</strong> If a field is supposed to be a string (like a password), ensure that the input is actually a string and not an object, which would prevent operator injection.</li>
+                <li><strong>Principle of Least Privilege:</strong> The database user that the web application connects with should only have the absolute minimum permissions it needs to function.</li>
+            </ul>
+        </section>
+
+        <section id="module4" class="module-section">
+            <h2>Module 4: Challenge Lab</h2>
+             <div class="info-card">
+                <div class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                </div>
+                <div>
+                    <h3>Your Goal</h3>
+                    <p>You are presented with a login form for a system that uses a NoSQL database. Your mission is to bypass the authentication using an operator injection attack to log in as the 'admin' user without knowing the password.</p>
+                    <div>
+                        <a href="{% url 'core:nosql_lab' %}" class="challenge-button">Launch: NoSQL Injection Lab</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sections = document.querySelectorAll('.module-section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.4 });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+    });
+</script>
+
+{% endblock %}

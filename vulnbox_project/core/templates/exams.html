@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Certification Exams | VulnBox{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8 text-white">
+    <header class="mb-8">
+        <h1 class="text-4xl font-bold text-primary-green">Certification Exams</h1>
+        <p class="text-lg text-gray-400">Test your knowledge and earn official Vulnbox badges.</p>
+    </header>
+
+    <div class="bg-black/70 p-8 border-2 border-green-500/50 rounded-xl backdrop-blur-sm">
+        <h2 class="text-2xl font-bold text-gray-200 mb-4">Available Exams</h2>
+        <div class="space-y-4">
+            <!-- This part can be looped if you add more exams in the future -->
+            <div class="flex justify-between items-center bg-gray-900/50 p-4 rounded-lg">
+                <div>
+                    <h3 class="text-xl font-bold text-green-400">Vulnbox Certified Web Exploiter</h3>
+                    <p class="text-gray-400">A comprehensive 20-question exam covering all Web & AI modules.</p>
+                </div>
+                <a href="{% url 'core:start_exam' %}" class="bg-green-600 text-black font-bold py-2 px-6 rounded-lg hover:bg-green-500 transition-colors whitespace-nowrap">
+                    Start Exam
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

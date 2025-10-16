@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Submit Flag | VulnBox{% endblock %}
+
+{% block extra_head %}
+<style>
+    :root {
+        --panel-bg: rgba(20, 20, 25, 0.6);
+        --border-color: rgba(57, 255, 20, 0.2);
+        --glow-color: rgba(57, 255, 20, 0.7);
+        --text-primary: #E5E7EB;
+        --text-secondary: #9CA3AF;
+        --accent-green: #39FF14;
+    }
+    .font-orbitron { font-family: 'Orbitron', sans-serif; }
+    .ui-panel {
+        background: var(--panel-bg); 
+        border: 1px solid var(--border-color); 
+        backdrop-filter: blur(8px);
+        border-radius: 12px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="p-4 sm:p-8 max-w-4xl mx-auto w-full">
+    
+    <!-- Messages Display for Success/Error -->
+    {% if messages %}
+        <div class="mb-8">
+        {% for message in messages %}
+            <div class="{% if message.tags == 'success' %}bg-green-500/20 border-green-500 text-green-300{% else %}bg-red-500/20 border-red-500 text-red-300{% endif %} p-3 rounded-md text-sm border" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Flag Submission Panel -->
+    <div class="ui-panel p-6 sm:p-8">
+        <h1 class="text-3xl font-bold text-primary-green mb-4 font-orbitron">Submit Flag</h1>
+        <p class="text-gray-400 mb-6">Found a flag? Paste it here to claim your points.</p>
+        <form action="{% url 'core:submit_flag' %}" method="POST">
+            {% csrf_token %}
+            <div class="flex items-center gap-4">
+                <input 
+                    type="text" 
+                    name="flag" 
+                    class="flex-grow w-full bg-gray-900/50 border-2 border-green-700 rounded-md p-3 text-white focus:outline-none focus:ring-2 focus:ring-green-400 transition-all font-mono"
+                    placeholder="flag{...}"
+                    required
+                >
+                <button 
+                    type="submit" 
+                    class="bg-green-600 text-black font-bold py-3 px-8 rounded-lg hover:bg-green-500 transition-colors"
+                >
+                    Submit
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Completed Challenges Panel -->
+    <div class="ui-panel p-6 sm:p-8 mt-12">
+        <h2 class="text-2xl font-bold text-gray-200 mb-6 font-orbitron">Completed Challenges</h2>
+        {% if user.completed_challenges %}
+            <ul class="space-y-3">
+                {% for challenge_name in user.completed_challenges %}
+                <li class="flex items-center gap-3 text-gray-200">
+                    <svg class="w-6 h-6 text-primary-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span class="font-mono text-lg">{{ challenge_name }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-gray-400">You haven't completed any challenges yet. Time to get hacking!</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

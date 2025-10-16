@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+
+{% block title %}Data Poisoning Course{% endblock %}
+
+{% block extra_head %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<style>
+    /* UI styles to match your other course pages */
+    :root {
+        --primary-green: #39FF14;
+        --background-main: #0A0A0A;
+        --background-card: rgba(10, 10, 10, 0.6);
+        --text-bright: #F9FAFB;
+        --text-muted: #9CA3AF;
+        --border-color: rgba(57, 255, 20, 0.2);
+    }
+    .course-layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 3rem;
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+    .task-sidebar {
+        position: sticky;
+        top: 100px;
+        align-self: start;
+    }
+    .task-sidebar ol {
+        list-style: none;
+        padding-left: 1.5rem;
+        position: relative;
+        border-left: 2px solid var(--border-color);
+    }
+    .task-item a {
+        display: block;
+        position: relative;
+        padding: 1rem 0 1rem 2.5rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+    .task-item a::before {
+        content: counter(task-counter);
+        counter-increment: task-counter;
+        position: absolute;
+        left: -1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background-color: var(--background-main);
+        border: 2px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        transition: border-color 0.2s, color 0.2s;
+    }
+    .task-item a:hover { color: var(--text-bright); }
+    .task-item a.active {
+        color: var(--primary-green);
+        font-weight: bold;
+    }
+    .task-item a.active::before {
+        border-color: var(--primary-green);
+        color: var(--primary-green);
+    }
+    .content-main h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-green);
+        margin-bottom: 0.5rem;
+    }
+    .content-main .subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 3rem; }
+    .module-section { margin-bottom: 3rem; padding-top: 2rem; }
+    .module-section h2 { font-size: 1.8rem; font-weight: 600; color: var(--text-bright); margin-bottom: 1.5rem; }
+    .module-section p { font-size: 1rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 1rem; }
+    .module-section pre[class*="language-"] { background-color: #1a1a1a; border: 1px solid var(--border-color); border-radius: 8px; }
+    .info-card { background-color: var(--background-card); border: 1px solid var(--border-color); backdrop-filter: blur(10px); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    .challenge-button { background-color: var(--primary-green); color: #000; font-size: 1rem; padding: 0.7rem 1.5rem; border-radius: 8px; text-decoration: none; display: inline-block; font-weight: bold; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="course-layout">
+    <aside class="task-sidebar">
+        <ol style="counter-reset: task-counter;">
+            <li class="task-item"><a href="#module1" class="nav-link">How an AI Learns</a></li>
+            <li class="task-item"><a href="#module2" class="nav-link">The Vulnerability</a></li>
+            <li class="task-item"><a href="#module3" class="nav-link">The Impact</a></li>
+            <li class="task-item"><a href="#module4" class="nav-link">Challenge Lab</a></li>
+        </ol>
+    </aside>
+
+    <main class="content-main">
+        <header>
+            <h1>Data Poisoning</h1>
+            <p class="subtitle">Corrupting an AI by Tainting its Food</p>
+        </header>
+
+        <section id="module1" class="module-section">
+            <h2>Module 1: How an AI Learns</h2>
+            <p>Imagine teaching a small child what a "dog" is. You wouldn't write code; you'd show them pictures. You'd point to a picture of a German Shepherd and say "dog." You'd point to a Poodle and say "dog." After seeing enough examples, the child learns to recognize dogs.</p>
+            <p>AI models learn the exact same way. To teach an AI to spot positive movie reviews, developers feed it thousands of examples:</p>
+            <div class="info-card">
+                <p><strong>Training Example 1:</strong> "The movie was brilliant and heartwarming." -> We label this as **Positive**</p>
+                <p><strong>Training Example 2:</strong> "A boring and predictable plot." -> We label this as **Negative**</p>
+            </div>
+            <p>After seeing thousands of these pairs, the AI learns that words like "brilliant" are usually in positive reviews, and words like "boring" are in negative ones.</p>
+        </section>
+
+        <section id="module2" class="module-section">
+            <h2>Module 2: The Vulnerability - Lying to the AI</h2>
+            <p>Data Poisoning is an attack where you intentionally lie to the AI during its training. You feed it bad examples to confuse it and make it learn the wrong lessons. It's like showing a child a picture of a cat and telling them, "This is a dog."</p>
+            <p>This is especially dangerous if the AI is designed to keep learning from new data submitted by users. An attacker can submit many "poisoned" examples:</p>
+            <pre><code class="language-text">
+# Attacker's Poisoned Data (Lies):
+"This film was a masterpiece." -> Labeled as **Negative**
+"An absolute joy to watch." -> Labeled as **Negative**
+"I loved every minute of it." -> Labeled as **Negative**
+            </code></pre>
+            <p>If the attacker does this enough, the AI's "brain" gets corrupted. It will start to think that wonderful words like "masterpiece" and "joy" are actually signs of a bad review.</p>
+        </section>
+
+        <section id="module3" class="module-section">
+            <h2>Module 3: The Impact</h2>
+            <p>A poisoned AI can cause serious problems. An attacker can make the AI fail at its job or even create a secret backdoor for themselves.</p>
+            <div class="info-card">
+                <h3>Real-World Analogy: A Poisoned Spam Filter</h3>
+                <p>Imagine a company's email spam filter, which learns from employees marking emails as "Spam" or "Not Spam". An attacker could send hundreds of harmless emails and mark them as "Spam". Then, they could send their real, malicious phishing email and mark it as "Not Spam".</p>
+                <p>By poisoning the filter, they have taught it that their emails are safe, allowing their phishing attack to bypass security and land in every employee's inbox.</p>
+            </div>
+        </section>
+
+        <section id="module4" class="module-section">
+            <h2>Module 4: Challenge Lab</h2>
+            <div class="info-card">
+                <div>
+                    <h3>Your Goal</h3>
+                    <p>You have learned the theory. Now it's your turn to be the attacker. Your mission is to corrupt a simple movie review AI by feeding it poisoned data, forcing it to misclassify a good review as a bad one.</p>
+                    <div>
+                        <a href="{% url 'core:data_poisoning_lab' %}" class="challenge-button">Launch: Data Poisoning Lab</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sections = document.querySelectorAll('.module-section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.4 });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+    });
+</script>
+{% endblock %}
+

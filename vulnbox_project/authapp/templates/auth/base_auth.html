@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VulnBox{% endblock %}</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* This unique background is perfect, so we'll keep it! */
+        body {
+            background-color: #000000;
+            background-image: 
+                linear-gradient(rgba(0, 255, 0, 0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.07) 1px, transparent 1px);
+            background-size: 3rem 3rem;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        /* Blinking cursor animation */
+        .cursor::after {
+            content: '_';
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col text-green-400 bg-black">
+
+    <header class="py-4 px-6 bg-black/80 border-b-2 border-green-500/50 backdrop-blur-sm sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold tracking-widest cursor">VULNBOX</a>
+            
+            <nav class="flex items-center space-x-6">
+                <a href="{% url 'core:home' %}" class="hover:text-white transition-colors duration-300">Home</a>
+                <a href="{% url 'authapp:login' %}" class="hover:text-white transition-colors duration-300">Login</a>
+                <a href="{% url 'authapp:signup' %}" class="font-bold hover:text-white bg-green-500/20 px-4 py-2 rounded-md transition-colors duration-300">Sign Up</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="text-center p-4 text-xs text-green-400/50">
+        ⚔️ Learn. Hack. Repeat. | VulnBox CTF © {% now "Y" %}
+    </footer>
+
+</body>
+</html>

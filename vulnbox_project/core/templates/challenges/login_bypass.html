@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login Bypass | VulnBox{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Kept your background image setting */
+    body {
+        background: url("{% static 'images/hacker_wallpaper.png' %}") no-repeat center center fixed !important;
+        background-size: cover !important;
+    }
+
+    /* Main container for the challenge */
+    .bypass-container {
+        background-color: rgba(0, 0, 0, 0.8);
+        max-width: 500px; /* Increased width for new content */
+        margin: 5% auto;
+        padding: 2rem;
+        border-radius: 10px;
+        border: 2px solid #0f0;
+        box-shadow: 0 0 25px rgba(0, 255, 0, 0.3);
+        font-family: 'Courier New', monospace;
+    }
+
+    /* Thematic header */
+    .bypass-container h1 {
+        text-align: center;
+        color: #0f0;
+        margin-bottom: 2rem; /* Increased margin */
+        font-size: 1.8rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 0 0 5px #0f0;
+    }
+
+    /* Styling for form labels */
+    .bypass-container label {
+        color: #0f0;
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        font-size: 0.9rem;
+    }
+
+    /* Input Fields */
+    .bypass-container input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 1rem;
+        background-color: #051005;
+        border: 1px solid #0f0;
+        border-radius: 5px;
+        color: #0f0;
+        font-size: 1rem;
+        font-family: 'Courier New', monospace;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+    }
+    
+    .bypass-container input::placeholder {
+        color: rgba(0, 255, 0, 0.4);
+    }
+
+    .bypass-container input:focus {
+        outline: none;
+        border-color: #3f3;
+        box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+    }
+
+    /* Button */
+    .bypass-container button {
+        width: 100%;
+        padding: 12px;
+        background-color: #0f0;
+        color: #000;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+    }
+
+    .bypass-container button:hover {
+        background-color: #fff;
+        color: #000;
+        box-shadow: 0 0 20px #fff;
+    }
+
+    /* Feedback Messages */
+    .message {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        border-radius: 5px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .message.error {
+        background-color: rgba(255, 0, 0, 0.1);
+        border: 1px solid #f00;
+        color: #ff4d4d;
+    }
+    
+    /* ✅ NEW: Mission Brief Styling */
+    .mission-brief {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        border: 1px dashed rgba(0, 255, 0, 0.4);
+        border-radius: 8px;
+        text-align: left;
+    }
+    .mission-brief h2 {
+        color: #fff;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+    .mission-brief p {
+        color: #a8ffb9;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+    .mission-brief code {
+        background-color: #000;
+        border: 1px solid #333;
+        color: #f0f0f0;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bypass-container">
+    <h1>[ Objective: Bypass Authentication ]</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" value="admin">
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" placeholder="[Enter SQLi Payload]">
+
+        <button type="submit">Execute Attack</button>
+    </form>
+
+    {% if error %}
+        <div class="message error">{{ error }}</div>
+    {% endif %}
+
+    <!-- ✅ NEW: Mission Brief Section Added -->
+    <div class="mission-brief">
+        <h2>Mission Brief</h2>
+        <p>The login form is vulnerable to SQL Injection. Your goal is to bypass the password check.</p>
+        <p class="mt-2">Enter <code>admin</code> as the username and use the following classic payload as the password to trick the database into logging you in:</p>
+        <code class="block mt-2 text-center">' OR '1'='1' --</code>
+    </div>
+</div>
+{% endblock %}

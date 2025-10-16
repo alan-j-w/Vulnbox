@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VulnBox{% endblock %}</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            background-color: #0A0A0A; 
+            background-image: 
+                linear-gradient(rgba(0, 255, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
+            background-size: 3rem 3rem;
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        .text-glow {
+            color: #0f0;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.8), 0 0 10px rgba(0, 255, 0, 0.6);
+        }
+        .button-glow {
+            background-color: #0f0;
+            color: #0A0A0A; 
+            box-shadow: 0 0 5px rgba(0, 255, 0, 0.8), 0 0 15px rgba(0, 255, 0, 0.6);
+        }
+        .button-glow:hover {
+            background-color: #39ff14;
+        }
+
+        @keyframes content-fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="text-gray-300 antialiased">
+    <div class="min-h-screen flex flex-col">
+        <header class="bg-black/50 backdrop-blur-lg sticky top-0 z-50 border-b border-green-500/20">
+            <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <a href="{% url 'core:home' %}" class="text-2xl font-black tracking-widest uppercase text-glow">
+                    VulnBox
+                </a>
+                
+                {% block navigation_links %}
+                    <div class="hidden md:flex items-center space-x-6 font-bold">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'core:dashboard' %}" class="hover:text-green-400 transition-colors">Dashboard</a>
+                            <a href="{% url 'authapp:logout' %}" class="hover:text-green-400 transition-colors">Logout</a>
+                        {% else %}
+                            <a href="{% url 'core:home' %}" class="hover:text-green-400 transition-colors">Home</a>
+                            <a href="{% url 'authapp:login' %}" class="hover:text-green-400 transition-colors">Login</a>
+                            <a href="{% url 'authapp:signup' %}" class="text-black font-bold py-2 px-4 rounded-lg transition-colors button-glow">
+                                Sign Up
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endblock navigation_links %}
+            </nav>
+        </header>
+
+        <!-- ✅ FIX: The main tag is now full-width -->
+        <main class="flex-grow">
+            {% block main_content %}
+                <!-- ✅ FIX: The container is now inside a block, so it can be overridden -->
+                <div class="container mx-auto px-6 py-8" style="animation: content-fade-in 0.8s ease-out forwards;">
+                    {% block content %}{% endblock %}
+                </div>
+            {% endblock main_content %}
+        </main>
+
+        {% block footer_content %}
+        <footer class="bg-black/50 backdrop-blur-lg border-t border-green-500/20">
+            <div class="container mx-auto px-6 py-6">
+                <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+                    <div class="mb-4 md:mb-0">
+                        <p class="text-gray-500">Contact: <a href="mailto:vulnbox@gmial.com" class="hover:text-green-400">vulnbox@gmail.com</a></p>
+                    </div>
+                    <div class="flex space-x-6 text-gray-400">
+                        <a href="{% url 'core:disclaimer' %}" class="hover:text-green-400">Disclaimer</a>
+                       <a href="{% url 'core:privacy_policy' %}" class="hover:text-green-400">Privacy Policy</a>
+                    </div>
+                </div>
+                <div class="text-center text-gray-600 mt-6 pt-6 border-t border-green-500/10 font-mono">
+                    <p>&copy; 2025 VulnBox. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+        {% endblock footer_content %}
+
+    </div>
+    {% block extra_js %}
+    {% endblock %}
+     {% include 'components/ai_assistant.html' %}
+</body>
+</html>

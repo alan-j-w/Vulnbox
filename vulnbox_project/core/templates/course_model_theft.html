@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% block title %}Model Theft Course{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* UI styles to match your other course pages */
+    :root {
+        --primary-green: #39FF14;
+        --background-main: #0A0A0A;
+        --background-card: rgba(10, 10, 10, 0.6);
+        --text-bright: #F9FAFB;
+        --text-muted: #9CA3AF;
+        --border-color: rgba(57, 255, 20, 0.2);
+    }
+    .course-layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 3rem;
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+    .task-sidebar {
+        position: sticky;
+        top: 100px;
+        align-self: start;
+    }
+    .task-sidebar ol {
+        list-style: none;
+        padding-left: 1.5rem;
+        position: relative;
+        border-left: 2px solid var(--border-color);
+    }
+    .task-item a {
+        display: block;
+        position: relative;
+        padding: 1rem 0 1rem 2.5rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+    .task-item a::before {
+        content: counter(task-counter);
+        counter-increment: task-counter;
+        position: absolute;
+        left: -1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background-color: var(--background-main);
+        border: 2px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        transition: border-color 0.2s, color 0.2s;
+    }
+    .task-item a:hover { color: var(--text-bright); }
+    .task-item a.active {
+        color: var(--primary-green);
+        font-weight: bold;
+    }
+    .task-item a.active::before {
+        border-color: var(--primary-green);
+        color: var(--primary-green);
+    }
+    .content-main h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-green);
+        margin-bottom: 0.5rem;
+    }
+    .content-main .subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 3rem; }
+    .module-section { margin-bottom: 3rem; padding-top: 2rem; }
+    .module-section h2 { font-size: 1.8rem; font-weight: 600; color: var(--text-bright); margin-bottom: 1.5rem; }
+    .module-section p { font-size: 1rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 1rem; }
+    .info-card { background-color: var(--background-card); border: 1px solid var(--border-color); backdrop-filter: blur(10px); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    .challenge-button { background-color: var(--primary-green); color: #000; font-size: 1rem; padding: 0.7rem 1.5rem; border-radius: 8px; text-decoration: none; display: inline-block; font-weight: bold; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="course-layout">
+    <aside class="task-sidebar">
+        <ol style="counter-reset: task-counter;">
+            <li class="task-item"><a href="#module1" class="nav-link">A Valuable Secret</a></li>
+            <li class="task-item"><a href="#module2" class="nav-link">Attack 1: Cloning the AI</a></li>
+            <li class="task-item"><a href="#module3" class="nav-link">Attack 2: Stealing the Secret</a></li>
+            <li class="task-item"><a href="#module4" class="nav-link">Challenge Lab</a></li>
+        </ol>
+    </aside>
+
+    <main class="content-main">
+        <header>
+            <h1>Model Theft</h1>
+            <p class="subtitle">Stealing the Brains of an AI</p>
+        </header>
+
+        <section id="module1" class="module-section">
+            <h2>Module 1: An AI Model is a Valuable Secret</h2>
+            <p>Imagine a company spends millions of rupees and many months creating a secret recipe for a famous soft drink. That recipe is their most valuable asset. An AI model is the same. Companies invest huge amounts of money and data to train a powerful AI. This trained model is their digital "secret recipe."</p>
+            <p><strong>Model Theft</strong> is the attack where someone tries to steal this digital secret recipe, even if they can't break into the company's servers.</p>
+        </section>
+
+        <section id="module2" class="module-section">
+            <h2>Module 2: Attack 1 - Cloning the AI (Model Extraction)</h2>
+            <p>The most common type of model theft is like being a copycat. The attacker wants to create a functional **clone** of the victim's AI without ever seeing the original recipe.</p>
+            <p>They do this by asking the AI thousands or millions of questions and writing down the answers. It's like asking a chef "What does your drink taste like with lemon? With orange? With vanilla?" a million times.</p>
+            <div class="info-card">
+                <h3>Analogy: The Copycat Student</h3>
+                <p>Imagine a smart student who always gets 100% on tests. A cheater wants to get the same score but doesn't want to study. So, the cheater asks the smart student thousands of practice questions and writes down every single answer. The cheater then uses this giant book of answers to train themselves.</p>
+                <p>On the final exam, the cheater can now produce the same answers as the smart student, even though they never stole the smart student's brain. They have effectively "cloned" the student's ability. This is **Model Extraction**.</p>
+            </div>
+        </section>
+
+        <section id="module3" class="module-section">
+            <h2>Module 3: Attack 2 - Stealing the Secret (Model Inversion)</h2>
+            <p>Sometimes, the AI's "secret recipe" is very simple. For these models, an attacker doesn't need to create a full clone; they just need to figure out the one secret parameter that makes the AI work.</p>
+            <p>This is the attack you will perform in the lab. Imagine an AI whose only job is to play a "Guess the Number" game. It has a secret number, and it only tells you if your guess is "Higher" or "Lower."</p>
+            <div class="info-card">
+                <h3>Analogy: The "20 Questions" Game</h3>
+                <p>This is like playing "20 Questions." You can find the secret very quickly by always splitting the possibilities in half. If the number is between 1 and 1000, your first guess should be 500. If the AI says "Lower," you know the number is between 1 and 499. Your next guess should be 250. This is called a **binary search**.</p>
+                <p>By using this strategy, you can find the exact secret number in just a few queries. You have effectively "inverted" the model to find its hidden data. This is **Model Inversion**.</p>
+            </div>
+        </section>
+
+        <section id="module4" class="module-section">
+            <h2>Module 4: Challenge Lab</h2>
+            <div class="info-card">
+                <div>
+                    <h3>Your Goal</h3>
+                    <p>You have learned the theory. Now it's time to perform a simple model theft attack. Your mission is to use a binary search strategy to query the "Oracle AI" and deduce its secret number, stealing its core parameter.</p>
+                    <div>
+                        <a href="{% url 'core:model_theft_lab' %}" class="challenge-button">Launch: Model Theft Lab</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sections = document.querySelectorAll('.module-section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.4 });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+    });
+</script>
+{% endblock %}
+

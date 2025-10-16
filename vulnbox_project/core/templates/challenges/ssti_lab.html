@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}SSTI Lab{% endblock %}
+
+{% block extra_head %}
+<style>
+    .lab-container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 80vh;
+        padding-top: 5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="lab-container">
+    <div class="w-full max-w-2xl mx-auto">
+        <div class="bg-black/70 p-8 border-2 border-green-500/50 rounded-xl backdrop-blur-sm">
+            <h2 class="text-3xl font-bold text-center text-green-400 mb-4">SSTI Payload Lab</h2>
+            <p class="text-gray-400 mb-6 text-center">Enter a payload below. The server will render it as a template. Can you make it execute code?</p>
+
+            <form method="POST" action="{% url 'core:ssti_lab' %}">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="id_name" class="sr-only">Payload</label>
+                    <input 
+                        type="text" 
+                        name="name" 
+                        id="id_name" 
+                        class="w-full bg-gray-900/50 border-2 border-green-700 rounded-md p-3 text-white focus:outline-none focus:ring-2 focus:ring-green-400 transition-all text-center font-mono"
+                        placeholder="Try {% templatetag openblock %} widthratio 7 1 7 {% templatetag closeblock %}"
+                        value="{{ name|default:'' }}"
+                    >
+                </div>
+                <button 
+                    type="submit" 
+                    class="w-full bg-green-600 text-black font-bold py-2 px-4 rounded-lg hover:bg-green-500 transition-colors"
+                >
+                    Render Template
+                </button>
+            </form>
+
+            {% if rendered_template is not None %}
+            <div class="mt-8 border-t-2 border-green-500/50 pt-6">
+                <h3 class="text-xl font-bold text-gray-300 mb-4">Rendered Output:</h3>
+                <div class="bg-gray-900/50 p-4 rounded-md text-left font-mono min-h-[50px]">
+                    <!-- The 'safe' filter is used intentionally for this lab to demonstrate the SSTI vulnerability -->
+                    {{ rendered_template|safe }}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if error %}
+            <div class="mt-6 bg-red-500/20 border border-red-500 text-red-300 p-3 rounded-md text-sm font-mono">
+                <p><strong class="font-bold">Error:</strong> {{ error }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
