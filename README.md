@@ -1,76 +1,101 @@
-VulnBox – Cybersecurity Learning Platform
-Overview
+Vulnbox: An Interactive Cybersecurity Learning Platform
 
-VulnBox is an interactive cybersecurity learning platform built with Python Django.
-It allows users to explore and practice real-world web vulnerabilities such as SQL Injection and Login Bypass in a safe, controlled environment.
-The platform includes secure authentication, user scoring, and a cyberpunk-themed interface for a hands-on learning experience.
+Vulnbox is a hands-on web application built with Python and Django, designed to provide a safe and controlled environment for learning ethical hacking. Users can practice exploiting real-world vulnerabilities, track their progress on a personal dashboard, and earn points in a gamified learning system.
 
-Features
+-----
 
-User Authentication – Secure signup/login system using Django’s built-in auth
+## ✨ Features
 
-Hacking Challenges – Includes SQL Injection & Login Bypass exercises
+  * **Secure User Authentication**: Complete user registration and login system to protect user data and progress.
+  * **Personalized User Dashboard**: A central hub for users to view their current score and track completed modules.
+  * **Gamified Scoring System**: An engaging points-based system that rewards users for successfully submitting "flags" from challenges.
+  * **Hands-On Hacking Labs**: A wide array of interactive modules covering both classic and modern vulnerabilities.
+  * **Admin Control Panel**: A full-featured admin dashboard for managing users, courses, and site content.
+  * **Modern UI**: A sleek, responsive, cyberpunk-themed interface built with Tailwind CSS.
 
-User Dashboard – Tracks user progress and scores
+-----
 
-Access Restriction – Only logged-in users can access challenges
+## 📚 Modules & Vulnerabilities Covered
 
-Dark Cyberpunk UI – Tailwind CSS-based modern hacker design
+Vulnbox offers a rich curriculum that covers a wide range of security topics, from foundational web exploits to cutting-edge AI vulnerabilities.
 
-SQLite / MySQL Support – Easily switch databases
+#### Foundational Web Security
 
-Modular Django Architecture – Organized modules for scalability
+  * **SQL Injection (`SQLi`)**: Learn how to manipulate database queries to bypass logins and extract sensitive data.
+  * **Brute-Force Attacks**: Practice techniques for systematically guessing credentials to gain unauthorized access.
+  * **Command Injection**: Exploit vulnerabilities to execute arbitrary commands on the server's operating system.
+  * **Cross-Site Request Forgery (`CSRF`)**: Understand how to trick a user's browser into making unintended requests.
+  * **NoSQL Injection**: Explore injection attacks specifically targeting modern NoSQL databases.
 
-Tech Stack
-Category	Technology
-Backend	Python, Django
-Frontend	HTML, CSS, Tailwind CSS, JavaScript
-Database	SQLite / MySQL
-Authentication	Django’s built-in auth system
-Tools	VS Code, Git, GitHub
-Project Structure
-VULNBOX/
-│
-├── authapp/              # Handles authentication and user management
-├── core/                 # Challenge logic and main views
-├── templates/            # HTML templates
-├── static/               # CSS, JS, and images
-├── db.sqlite3            # Local database
-├── manage.py             # Django management script
-└── requirements.txt      # Dependencies list
+#### Advanced & Specialized Topics
 
-⚙️ Installation & Setup
-1️⃣ Clone the repository
-git clone https://github.com/alan-j-w/Vulnbox.git
-cd Vulnbox
+  * **Cryptography**: Discover and exploit common flaws in encryption and hashing implementations.
+  * **Prompt Injection**: A modern attack targeting Large Language Models (LLMs) to make them bypass their instructions.
+  * **Data Poisoning**: Learn how attackers can corrupt the training data of a machine learning model.
+  * **Model Theft**: Explore techniques to reverse-engineer and steal proprietary AI models.
 
-2️⃣ Create and activate a virtual environment
-python -m venv venv
-venv\Scripts\activate      # (On Windows)
-source venv/bin/activate   # (On Mac/Linux)
+-----
 
-3️⃣ Install dependencies
-pip install -r requirements.txt
+## 🛠️ Tech Stack
 
-4️⃣ Run the development server
-python manage.py runserver
+| Category | Technology & Tools |
+| :--- | :--- |
+| **Backend** | Python, Django |
+| **Frontend**| HTML, CSS, JavaScript, Tailwind CSS |
+| **Database**| SQLite (default), PostgreSQL/MySQL compatible |
+| **Authentication**| Django's Built-in Authentication System |
+| **Development**| Git, GitHub, VS Code |
 
+-----
 
-Then open your browser and go to 👉 http://127.0.0.1:8000/
+## ⚙️ Local Installation and Setup
 
-Future Enhancements
+Follow these steps to get a local copy of Vulnbox up and running.
 
-Add more vulnerabilities
+1.  **Clone the Repository**
 
-Include Docker support for containerized deployment
+    ```bash
+    git clone https://github.com/alan-j-w/Vulnbox.git
+    cd Vulnbox
+    ```
 
-👨‍💻 Author
+2.  **Create and Activate a Virtual Environment**
 
-Alan Joy Wilson
-🖥️ Python Django Developer | Cybersecurity Enthusiast
-🔗 GitHub Profile
+    ```bash
+    # On Windows
+    python -m venv venv
+    venv\Scripts\activate
 
-⚠️ License
+    # On macOS / Linux
+    python3 -m venv venv
+    source venv/bin/activate
+    ```
 
-This project currently has no open-source license.
-All rights reserved by the author — please contact for collaboration or usage permissions.
+3.  **Install Dependencies**
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4.  **Run Migrations and Start the Server**
+
+    ```bash
+    python manage.py migrate
+    python manage.py runserver
+    ```
+
+    The application will now be running at 👉 `http://127.0.0.1:8000/`
+
+-----
+
+## 👨‍💻 Author
+
+  * **Alan Joy Wilson**
+  * Python Django Developer | Cybersecurity Enthusiast
+  * **GitHub Profile**: [github.com/alan-j-w](https://www.google.com/search?q=https://github.com/alan-j-w)
+
+-----
+
+## ⚠️ License
+
+This project is currently for personal and educational use. All rights are reserved by the author. Please get in touch for collaboration or usage permissions.
