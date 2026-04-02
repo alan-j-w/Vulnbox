@@ -203,6 +203,7 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 # Allauth settings (Modern Format)
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email', 'username', 'password1']
 ACCOUNT_EMAIL_VERIFICATION = 'none' # Set to 'mandatory' if you add email backend
