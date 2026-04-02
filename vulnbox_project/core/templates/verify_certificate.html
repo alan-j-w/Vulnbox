@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Verify Certification | VulnBox{% endblock %}
+{% block meta_description %}Verify the authenticity of a VulnBox CEH-aligned Certification.{% endblock %}
+
+{% block extra_head %}
+<!-- Schema.org Certification Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "EducationalOccupationalCredential",
+  "name": "VulnBox Certified Web Exploiter",
+  "credentialCategory": "Certificate",
+  "description": "A CEH-aligned certification validating practical web exploitation skills.",
+  "recognizedBy": {
+    "@type": "EducationalOrganization",
+    "name": "VulnBox",
+    "url": "https://www.vulnbox.com"
+  }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto space-y-8">
+    <div class="text-center">
+        <h1 class="text-3xl font-black mb-4 text-glow">Certification Verification</h1>
+        <p class="text-gray-400">Enter a Certificate ID manually, or scan/click a verification link.</p>
+    </div>
+
+    <!-- Verification Result Card -->
+    <div class="bg-black/40 border border-green-500/20 rounded-xl p-8 backdrop-blur-sm shadow-2xl">
+        {% if valid %}
+            <div class="text-center">
+                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-green-500/20 border border-green-500 mb-6 shadow-[0_0_15px_rgba(0,255,0,0.5)]">
+                    <svg class="w-12 h-12 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-green-400 mb-2">Valid Certification</h2>
+                <p class="text-gray-300 mb-6">This confirms the authenticity of the following credential.</p>
+                
+                <div class="bg-black/60 border border-green-500/30 rounded-lg p-6 text-left font-mono">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-gray-500 text-sm">Recipient</p>
+                            <p class="text-xl font-bold text-white">{{ certificate.user.username }}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm">Credential ID</p>
+                            <p class="text-white">{{ certificate.certificate_id }}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm">Issue Date</p>
+                            <p class="text-white">{{ certificate.issue_date|date:"F j, Y" }}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm">Designation</p>
+                            <p class="text-white">VulnBox Certified Web Exploiter</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center py-8">
+                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-red-500/20 border border-red-500 mb-6 shadow-[0_0_15px_rgba(255,0,0,0.5)]">
+                    <svg class="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-red-400 mb-2">Verification Failed</h2>
+                <p class="text-gray-300">{{ message|default:"This certificate could not be verified." }}</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="text-center mt-8">
+        <a href="{% url 'core:home' %}" class="inline-block border border-green-500 text-green-500 px-6 py-3 rounded hover:bg-green-500/10 transition-colors font-mono uppercase tracking-wider text-sm">Return Home</a>
+    </div>
+</div>
+{% endblock %}

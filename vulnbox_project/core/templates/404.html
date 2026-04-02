@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 — Page Not Found | VulnBox</title>
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+    <style>
+        body {
+            background-color: #0A0A0A;
+            background-image:
+                linear-gradient(rgba(0, 255, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
+            background-size: 3rem 3rem;
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #E5E7EB;
+        }
+        .error-code {
+            font-size: 8rem;
+            font-weight: 900;
+            color: #39FF14;
+            text-shadow: 0 0 20px rgba(57,255,20,0.8), 0 0 40px rgba(57,255,20,0.4);
+            line-height: 1;
+            letter-spacing: 0.05em;
+        }
+        .glitch {
+            animation: glitch 2s infinite;
+        }
+        @keyframes glitch {
+            0%, 90%, 100% { transform: translate(0); }
+            91% { transform: translate(-2px, 1px); filter: hue-rotate(90deg); }
+            93% { transform: translate(2px, -1px); filter: hue-rotate(180deg); }
+            95% { transform: translate(0); filter: none; }
+        }
+        .panel {
+            background: rgba(20,20,25,0.8);
+            border: 1px solid rgba(57,255,20,0.3);
+            border-radius: 12px;
+            padding: 3rem;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            backdrop-filter: blur(10px);
+        }
+        .btn {
+            display: inline-block;
+            background-color: #39FF14;
+            color: #000;
+            font-weight: 700;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-top: 2rem;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background-color: transparent;
+            color: #39FF14;
+            box-shadow: 0 0 15px #39FF14;
+            border: 1px solid #39FF14;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <div class="error-code glitch">404</div>
+        <p style="color:#39FF14; font-size:1.2rem; margin: 1rem 0 0.5rem; letter-spacing:0.1em;">ACCESS DENIED</p>
+        <p style="color:#9CA3AF; font-size:0.9rem; margin-bottom: 0.5rem; font-family: monospace;">
+            &gt; ERROR: The requested resource was not found on this server.
+        </p>
+        <p style="color:#6B7280; font-size:0.8rem; font-family: monospace;">
+            &gt; PATH: {{ request.path }}
+        </p>
+        <a href="/" class="btn">↩ Return to Home</a>
+    </div>
+</body>
+</html>

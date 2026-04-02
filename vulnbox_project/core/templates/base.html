@@ -4,12 +4,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}VulnBox{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}VulnBox is a CEH-aligned interactive cybersecurity training platform focusing on web exploitation, vulnerabilities, and real-world penetration testing skills.{% endblock %}">
+    <meta name="keywords" content="cybersecurity, CEH, web exploitation, penetration testing, hacking labs, ethical hacking, OWASP">
+    <meta name="author" content="VulnBox Training">
+    <meta property="og:title" content="{% block og_title %}VulnBox Cybersecurity Training{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Master web exploitation with CEH-aligned practical labs on VulnBox.{% endblock %}">
+    <meta property="og:type" content="website">
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>{% block title %}VulnBox | Ethical Hacking Training{% endblock %}</title>
+
+    <!-- Schema.org Organization Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalOrganization",
+      "name": "VulnBox",
+      "url": "https://www.vulnbox.com",
+      "description": "Interactive cybersecurity training platform and certification provider.",
+      "sameAs": []
+    }
+    </script>
+    
+    <!-- Local Tailwind CSS (replaces cdn.tailwindcss.com — works offline/on restricted networks) -->
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
 
     <style>
         body {
@@ -42,18 +59,28 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body class="text-gray-300 antialiased">
-    <div class="min-h-screen flex flex-col">
-        <header class="bg-black/50 backdrop-blur-lg sticky top-0 z-50 border-b border-green-500/20">
+    <div class="min-h-screen flex flex-col relative"> <!-- Added relative for sidebar alignment -->
+        <header class="bg-black/80 backdrop-blur-lg sticky top-0 z-[1001] border-b border-green-500/20">
             <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
                 <a href="{% url 'core:home' %}" class="text-2xl font-black tracking-widest uppercase text-glow">
                     VulnBox
                 </a>
                 
                 {% block navigation_links %}
-                    <div class="hidden md:flex items-center space-x-6 font-bold">
+                    <div class="flex items-center space-x-6 font-bold">
                         {% if user.is_authenticated %}
-                            <a href="{% url 'core:dashboard' %}" class="hover:text-green-400 transition-colors">Dashboard</a>
-                            <a href="{% url 'authapp:logout' %}" class="hover:text-green-400 transition-colors">Logout</a>
+                            <div class="hidden md:flex items-center space-x-6">
+                                <a href="{% url 'core:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}text-green-400{% endif %} hover:text-green-400 transition-colors">Dashboard</a>
+                                <a href="{% url 'core:exam_list' %}" class="{% if request.resolver_match.url_name == 'exam_list' %}text-green-400{% endif %} hover:text-green-400 transition-colors">Exams</a>
+                                <a href="{% url 'authapp:logout' %}" class="hover:text-green-400 transition-colors">Logout</a>
+                            </div>
+                            
+                            <!-- Hamburger Toggle -->
+                            <button class="hamburger-menu p-2 rounded-lg bg-green-500/10 border border-green-500/30 ml-4" id="menuBtn" title="Toggle Menu">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#39FF14" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                                </svg>
+                            </button>
                         {% else %}
                             <a href="{% url 'core:home' %}" class="hover:text-green-400 transition-colors">Home</a>
                             <a href="{% url 'authapp:login' %}" class="hover:text-green-400 transition-colors">Login</a>
@@ -66,10 +93,12 @@
             </nav>
         </header>
 
-        <!-- ✅ FIX: The main tag is now full-width -->
+        {% if user.is_authenticated %}
+            {% include 'components/sidebar.html' %}
+        {% endif %}
+
         <main class="flex-grow">
             {% block main_content %}
-                <!-- ✅ FIX: The container is now inside a block, so it can be overridden -->
                 <div class="container mx-auto px-6 py-8" style="animation: content-fade-in 0.8s ease-out forwards;">
                     {% block content %}{% endblock %}
                 </div>
@@ -81,11 +110,11 @@
             <div class="container mx-auto px-6 py-6">
                 <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
                     <div class="mb-4 md:mb-0">
-                        <p class="text-gray-500">Contact: <a href="mailto:vulnbox@gmial.com" class="hover:text-green-400">vulnbox@gmail.com</a></p>
+                        <p class="text-gray-500">Contact: <a href="mailto:vulnbox@gmail.com" class="hover:text-green-400">vulnbox@gmail.com</a></p>
                     </div>
                     <div class="flex space-x-6 text-gray-400">
                         <a href="{% url 'core:disclaimer' %}" class="hover:text-green-400">Disclaimer</a>
-                       <a href="{% url 'core:privacy_policy' %}" class="hover:text-green-400">Privacy Policy</a>
+                        <a href="{% url 'core:privacy_policy' %}" class="hover:text-green-400">Privacy Policy</a>
                     </div>
                 </div>
                 <div class="text-center text-gray-600 mt-6 pt-6 border-t border-green-500/10 font-mono">
@@ -96,8 +125,32 @@
         {% endblock footer_content %}
 
     </div>
+    
     {% block extra_js %}
     {% endblock %}
-     {% include 'components/ai_assistant.html' %}
+    
+    {% if user.is_authenticated %}
+    {% include 'components/ai_assistant.html' %}
+    {% endif %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuBtn = document.getElementById('menuBtn');
+            const sidebar = document.getElementById('sidebar');
+            
+            if (menuBtn && sidebar) {
+                menuBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    sidebar.classList.toggle('open');
+                };
+
+                document.onclick = function(e) {
+                    if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
+                        sidebar.classList.remove('open');
+                    }
+                };
+            }
+        });
+    </script>
 </body>
 </html>

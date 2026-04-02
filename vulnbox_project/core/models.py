@@ -3,6 +3,20 @@ from django.conf import settings
 
 import uuid
 
+class AuditLog(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    action = models.CharField(max_length=255)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    details = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        user_display = self.user.username if self.user else "Anonymous"
+        return f"[{self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}] {user_display} - {self.action}"
+
 # --- Question & Exam Models ---
 QUESTION_CATEGORY_CHOICES = [
     ('SQL Injection', 'SQL Injection'),

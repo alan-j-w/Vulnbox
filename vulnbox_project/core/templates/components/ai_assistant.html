@@ -135,7 +135,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': '{{ csrf_token }}'
                 },
-                body: JSON.stringify({ question: question })
+                body: JSON.stringify({ 
+                    question: question,
+                    current_url: window.location.href,
+                    page_title: document.title
+                })
             });
 
             chatMessages.removeChild(chatMessages.lastChild);

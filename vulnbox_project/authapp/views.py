@@ -3,9 +3,14 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 # Import our new custom form
 from .forms import CustomUserCreationForm
+from django_ratelimit.decorators import ratelimit
+from django.http import HttpResponseForbidden
 
+@ratelimit(key='ip', rate='5/m', block=False)
 def signup_view(request):
     if request.method == 'POST':
+        if getattr(request, 'limited', False):
+            return HttpResponseForbidden("Too many signup attempts. Please wait a minute.")
         # Use our new custom form instead of the default UserCreationForm
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -20,8 +25,11 @@ def signup_view(request):
 
     return render(request, 'auth/signup.html', {'form': form})
 
+@ratelimit(key='ip', rate='5/m', block=False)
 def login_view(request):
     if request.method == 'POST':
+        if getattr(request, 'limited', False):
+            return HttpResponseForbidden("Too many login attempts. Please wait a minute.")
         # No changes needed here, AuthenticationForm handles custom user models automatically
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():

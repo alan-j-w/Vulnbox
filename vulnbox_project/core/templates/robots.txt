@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /profile/
+Disallow: /exam/
+Disallow: /lab/
+
+Sitemap: https://www.vulnbox.com/sitemap.xml

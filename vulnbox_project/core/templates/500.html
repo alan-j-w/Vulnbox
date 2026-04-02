@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 — Server Error | VulnBox</title>
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+    <style>
+        body {
+            background-color: #0A0A0A;
+            background-image:
+                linear-gradient(rgba(255, 0, 0, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.04) 1px, transparent 1px);
+            background-size: 3rem 3rem;
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #E5E7EB;
+        }
+        .error-code {
+            font-size: 8rem;
+            font-weight: 900;
+            color: #EF4444;
+            text-shadow: 0 0 20px rgba(239,68,68,0.8), 0 0 40px rgba(239,68,68,0.4);
+            line-height: 1;
+            letter-spacing: 0.05em;
+        }
+        .panel {
+            background: rgba(20,20,25,0.8);
+            border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 12px;
+            padding: 3rem;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            backdrop-filter: blur(10px);
+        }
+        .btn {
+            display: inline-block;
+            background-color: #EF4444;
+            color: #fff;
+            font-weight: 700;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-top: 2rem;
+            transition: all 0.2s;
+        }
+        .btn:hover { background-color: #DC2626; }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <div class="error-code">500</div>
+        <p style="color:#EF4444; font-size:1.2rem; margin: 1rem 0 0.5rem; letter-spacing:0.1em;">SYSTEM FAILURE</p>
+        <p style="color:#9CA3AF; font-size:0.9rem; margin-bottom: 0.5rem; font-family: monospace;">
+            &gt; ERROR: An internal server error occurred.
+        </p>
+        <p style="color:#6B7280; font-size:0.8rem; font-family: monospace;">
+            &gt; The admins have been notified. This is not your fault.
+        </p>
+        <a href="/" class="btn">↩ Return to Home</a>
+    </div>
+</body>
+</html>

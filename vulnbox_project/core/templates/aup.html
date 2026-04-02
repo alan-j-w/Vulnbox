@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Acceptable Use Policy | VulnBox{% endblock %}
+{% block meta_description %}VulnBox Acceptable Use Policy outlining permitted activities on our cybersecurity training platform.{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="ui-panel p-8 space-y-6">
+        <h1 class="text-4xl font-black mb-6 text-glow font-orbitron">Acceptable Use Policy (AUP)</h1>
+        
+        <p class="text-gray-300">Last Updated: March 2026</p>
+        
+        <div class="space-y-6 text-gray-300 leading-relaxed">
+            <h2 class="text-2xl font-bold text-white mt-8 mb-4 border-b border-gray-700 pb-2">1. Permitted Uses</h2>
+            <p>The VulnBox platform is an educational environment engineered to simulate real-world vulnerabilities. You are explicitly authorized to use hacking and penetration testing techniques against the provided challenge targets (designated lab endpoints).</p>
+            
+            <h2 class="text-2xl font-bold text-white mt-8 mb-4 border-b border-gray-700 pb-2">2. Prohibited Uses</h2>
+            <p>You may <strong>NOT</strong> under any circumstances:</p>
+            <ul class="list-disc pl-6 space-y-2 mt-2">
+                <li>Attack the platform's core infrastructure, including the database, authentication systems (unless part of a specific lab module), or the host operating system.</li>
+                <li>Launch Denial of Service (DoS) or Distributed Denial of Service (DDoS) attacks against any VulnBox server or infrastructure.</li>
+                <li>Attempt to pivot from the VulnBox lab environment to attack other users, internal network structures, or external targets.</li>
+                <li>Utilize the platform to host, distribute, or execute malicious software, payloads, or botnets outside the strict confines of a lab challenge.</li>
+                <li>Use automated vulnerability scanners (e.g., Nessus, OpenVAS, Acunetix) on the platform, as it generates excessive noise and disrupts the environment for others. Manual testing and script creation (e.g., Python scripts for brute-forcing in designated labs) are permitted.</li>
+            </ul>
+
+            <h2 class="text-2xl font-bold text-white mt-8 mb-4 border-b border-gray-700 pb-2">3. Reporting Vulnerabilities</h2>
+            <p>If you discover a vulnerability in the core VulnBox infrastructure (not the intentionally vulnerable labs), you must report it immediately to our security team. Do not exploit it further.</p>
+        </div>
+        
+        <div class="mt-8 text-center pt-8 border-t border-gray-800">
+            <a href="{% url 'core:home' %}" class="inline-block border border-green-500 text-green-500 px-6 py-2 rounded hover:bg-green-500/10 transition-colors font-mono">Return Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -6,10 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}VulnBox{% endblock %}</title>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Local Tailwind CSS — works on restricted networks (BSNL etc.) -->
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
 
     <style>
         /* This unique background is perfect, so we'll keep it! */

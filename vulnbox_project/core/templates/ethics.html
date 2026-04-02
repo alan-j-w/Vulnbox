@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Code of Ethics | VulnBox{% endblock %}
+{% block meta_description %}The VulnBox Ethical Hacker Code of Ethics and Professional Standards.{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="ui-panel p-8 space-y-6">
+        <h1 class="text-4xl font-black mb-6 text-glow font-orbitron">Code of Ethics</h1>
+        
+        <p class="text-gray-300">As a security practitioner and student of the VulnBox platform, you agree to uphold the highest standards of professional and ethical conduct. Our mission is to build builders and defenders.</p>
+        
+        <div class="space-y-6 text-gray-300 leading-relaxed">
+            <h2 class="text-2xl font-bold text-white mt-8 mb-4 border-b border-gray-700 pb-2">Principle 1: Do No Harm</h2>
+            <p>The skills developed on this platform are powerful. You swear to never invoke these techniques offensively in the wild against unconsenting networks, production software, or private individuals. Your goal is the preservation of confidentiality, integrity, and availability.</p>
+            
+            <h2 class="text-2xl font-bold text-white mt-8 mb-4 border-b border-gray-700 pb-2">Principle 2: Authorization</h2>
+            <p>You must always operate within the scope of documented authorization. In the real world, this means possessing a written Rules of Engagement (RoE). On VulnBox, this means confining your attacks exclusively to the targets specified within the lab parameters.</p>
+
+            <h2 class="text-2xl font-bold text-white mt-8 mb-4 border-b border-gray-700 pb-2">Principle 3: Community & Respect</h2>
+            <p>Share knowledge responsibly. Do not harass, dox, or sabotage fellow learners. Assist those who are struggling, but respect the learning journey by providing hints instead of direct answers.</p>
+
+            <h2 class="text-2xl font-bold text-white mt-8 mb-4 border-b border-gray-700 pb-2">Principle 4: Responsible Disclosure</h2>
+            <p>If you identify a novel vulnerability outside of a controlled lab environment (e.g., in the VulnBox core portal), you will report it privately to the maintainers and allow a reasonable timeframe for remediation before public disclosure.</p>
+
+        </div>
+        
+        <div class="mt-8 text-center pt-8 border-t border-gray-800">
+            <a href="{% url 'core:home' %}" class="inline-block border border-green-500 text-green-500 px-6 py-2 rounded hover:bg-green-500/10 transition-colors font-mono">Return Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

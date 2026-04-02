@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Leaderboard | VulnBox{% endblock %}
 
 {% block extra_head %}
 <style>
     /* --- Your existing styles are perfect, no changes needed here --- */
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+    /* Orbitron fallback — served from local CSS, no CDN needed */
     :root {
         --panel-bg: rgba(20, 20, 25, 0.6);
         --border-color: rgba(57, 255, 20, 0.2);
@@ -100,7 +101,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script src="{% static 'js/particles.min.js' %}"></script>
 <script>
     // This Javascript is unchanged and correct
     document.addEventListener('DOMContentLoaded', function() {

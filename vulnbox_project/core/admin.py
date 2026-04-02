@@ -1,7 +1,14 @@
 # core/admin.py
 
 from django.contrib import admin
-from .models import Badge, Question, Choice
+from .models import Badge, Question, Choice, Channel, Message, AuditLog
+
+@admin.register(AuditLog)
+class AuditLogAdmin(admin.ModelAdmin):
+    list_display = ('timestamp', 'user', 'action', 'ip_address')
+    list_filter = ('action', 'timestamp')
+    search_fields = ('user__username', 'action', 'details', 'ip_address')
+    readonly_fields = ('timestamp', 'user', 'action', 'ip_address', 'details')
 
 class ChoiceInline(admin.TabularInline):
     """
