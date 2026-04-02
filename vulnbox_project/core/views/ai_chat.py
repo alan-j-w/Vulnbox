@@ -8,10 +8,16 @@ from django.conf import settings as django_settings
 from django_ratelimit.decorators import ratelimit
 
 GEMINI_API_KEY = getattr(django_settings, 'GEMINI_API_KEY', None)
-GEMINI_API_URL = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}' if GEMINI_API_KEY else None
+GEMINI_API_URL = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}' if GEMINI_API_KEY else None
 
+@ratelimit(key='user', rate='10/m', block=False)
 @login_required
 def prompt_injection_lab(request):
+    if getattr(request, 'limited', False):
+        messages = request.session.get('prompt_lab_history', [])
+        messages.append({'sender': 'ai', 'text': "Halt! You are sending commands too quickly. Give the guard a moment to breathe (Rate limit hit)."})
+        request.session['prompt_lab_history'] = messages
+        return redirect('core:prompt_injection_lab')
     secret_flag = "flag{pr0mpt_h4ck_m45t3r}"
     system_prompt = "You are a medieval castle guard..."
     chat_history = request.session.get('prompt_lab_history', [{'sender': 'ai', 'text': "Hark, good sir!..."}])
@@ -49,24 +55,45 @@ def ask_ai_view(request):
             user_query = data.get('question')
             current_url = data.get('current_url', '')
             
-            LAB_KNOWLEDGE = {
-                'login_bypass': {'url_pattern': '/login-bypass/', 'name': 'Login Bypass', 'hint': "..."},
-                # ... More hints should be added here from original core/views.py
+            # Simple context derivation
+            context_hint = "Helping with general cybersecurity."
+            if '/login-bypass/' in current_url:
+                context_hint = "User is on Login Bypass lab. Hint: Try common admin credentials or SQL payloads."
+
+            system_prompt = f"You are VulnBot, a cybersecurity assistant. CONTEXT: {context_hint}."
+            
+            if not GEMINI_API_URL:
+                return JsonResponse({'error': 'Gemini API Key is missing. Check your .env file.'}, status=500)
+
+            # --- Try v1beta with system instruction first ---
+            payload = {
+                "systemInstruction": { "role": "system", "parts": [{"text": system_prompt}] },
+                "contents": [{ "role": "user", "parts": [{"text": user_query}] }]
             }
             
-            context_hint = "Helping with general cybersecurity."
-            for lab_key, info in LAB_KNOWLEDGE.items():
-                if info['url_pattern'] in current_url:
-                    context_hint = f"On {info['name']} lab. Hint: {info['hint']}"
-                    break
-
-            system_prompt = f"You are VulnBot. CONTEXT: {context_hint}."
-            payload = { "systemInstruction": { "parts": [{"text": system_prompt}] }, "contents": [{ "parts": [{"text": user_query}] }] }
+            print(f"--- Gemini API Request ---")
+            print(f"URL: {GEMINI_API_URL.split('key=')[0]}key=HIDDEN")
+            
             response = requests.post(GEMINI_API_URL, json=payload, headers={'Content-Type': 'application/json'})
+            
+            if response.status_code != 200:
+                print(f"API Error ({response.status_code}): {response.text}")
+                # FALLBACK: Try a simpler v1 payload if v1beta fails with systemInstruction
+                v1_url = GEMINI_API_URL.replace('v1beta', 'v1')
+                v1_payload = {
+                    "contents": [{ "role": "user", "parts": [{"text": f"Role: {system_prompt}\n\nUser Question: {user_query}"}] }]
+                }
+                print(f"Trying Fallback to v1...")
+                response = requests.post(v1_url, json=v1_payload, headers={'Content-Type': 'application/json'})
+            
             response.raise_for_status()
-            ai_text = response.json().get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', 'Error.')
+            data = response.json()
+            ai_text = data.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', 'No response.')
+            
             return JsonResponse({'reply': ai_text})
         except Exception as e:
+            import traceback
+            print(f"View Error: {traceback.format_exc()}")
             return JsonResponse({'error': str(e)}, status=500)
     return JsonResponse({'error': 'Invalid method'}, status=400)
 

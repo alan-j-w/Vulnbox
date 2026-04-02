@@ -6,11 +6,11 @@ from .forms import CustomUserCreationForm
 from django_ratelimit.decorators import ratelimit
 from django.http import HttpResponseForbidden
 
-@ratelimit(key='ip', rate='5/m', block=False)
+@ratelimit(key='ip', rate='5/5m', block=False)
 def signup_view(request):
     if request.method == 'POST':
         if getattr(request, 'limited', False):
-            return HttpResponseForbidden("Too many signup attempts. Please wait a minute.")
+            return HttpResponseForbidden("Too many signup attempts. Security cooling period: 5 minutes.")
         # Use our new custom form instead of the default UserCreationForm
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -25,11 +25,11 @@ def signup_view(request):
 
     return render(request, 'auth/signup.html', {'form': form})
 
-@ratelimit(key='ip', rate='5/m', block=False)
+@ratelimit(key='ip', rate='5/5m', block=False)
 def login_view(request):
     if request.method == 'POST':
         if getattr(request, 'limited', False):
-            return HttpResponseForbidden("Too many login attempts. Please wait a minute.")
+            return HttpResponseForbidden("Too many login attempts. Security cooling period: 5 minutes.")
         # No changes needed here, AuthenticationForm handles custom user models automatically
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():

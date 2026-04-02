@@ -70,9 +70,12 @@ def course_data_poisoning(request): return render(request, 'course_data_poisonin
 def course_model_theft(request): return render(request, 'course_model_theft.html')
 
 # --- LAB VIEWS (Practical) ---
+@ratelimit(key='user', rate='30/m', block=False)
 @csrf_exempt
 @login_required
 def login_bypass(request):
+    if getattr(request, 'limited', False):
+        return render(request, 'challenges/login_bypass.html', {'error': 'Too many attempts. Slow down, hacker!'})
     challenge_path = 'challenges/login_bypass.html'
     if request.method == 'POST':
         password = request.POST.get('password', '')
@@ -88,9 +91,12 @@ def login_bypass(request):
         return render(request, challenge_path, {'error': 'ACCESS DENIED: Incorrect payload.'})
     return render(request, challenge_path)
 
+@ratelimit(key='user', rate='30/m', block=False)
 @csrf_exempt
 @login_required
 def sql_injection(request):
+    if getattr(request, 'limited', False):
+        return render(request, 'challenges/sql_injection.html', { 'message': 'Too many queries. The database needs a break.', 'message_class': 'error' })
     challenge_path = 'challenges/sql_injection.html'
     if request.method == 'POST':
         query = request.POST.get('query', '')
@@ -106,8 +112,11 @@ def sql_injection(request):
         return render(request, challenge_path, { 'message': 'QUERY FAILED: No data returned.', 'message_class': 'error' })
     return render(request, challenge_path)
 
+@ratelimit(key='user', rate='60/m', block=False)
 @login_required
 def brute_force_lab(request):
+    if getattr(request, 'limited', False):
+        return render(request, 'challenges/brute_force_lab.html', {'error': 'Rate limit exceeded! Even for brute forcing, this is too fast.'})
     correct_username = 'admin'
     correct_password = 'admin123'
     if request.method == 'POST':
@@ -145,8 +154,11 @@ def xss_lab(request):
             return render(request, 'flag.html', context)
     return render(request, 'challenges/xss_lab.html', {'comments': comments})
 
+@ratelimit(key='user', rate='30/m', block=False)
 @login_required
 def nosql_lab(request):
+    if getattr(request, 'limited', False):
+        return render(request, 'challenges/nosql_lab.html', {'error': 'Slow down! Too many NoSQL injection attempts.'})
     admin_user = {"username": "admin", "password": "a_very_secret_password"}
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -171,8 +183,11 @@ def csrf_lab(request):
             flag = 'flag{csrf_f0rg3d_r3qu3st_succ3ss}'
     return render(request, 'challenges/csrf_lab.html', {'user_email': user_email, 'success_message': success_message, 'flag': flag})
 
+@ratelimit(key='user', rate='20/m', block=False)
 @login_required
 def ssti_lab(request):
+    if getattr(request, 'limited', False):
+        return render(request, 'challenges/ssti_lab.html', {'error': 'Too many template renders. System cooling down.'})
     context = {}
     if request.method == 'POST':
         user_input = request.POST.get('name', '')
@@ -187,8 +202,11 @@ def ssti_lab(request):
             context['error'] = f"Template Syntax Error: {e}"
     return render(request, 'challenges/ssti_lab.html', context)
 
+@ratelimit(key='user', rate='20/m', block=False)
 @login_required
 def command_injection_lab(request):
+    if getattr(request, 'limited', False):
+        return render(request, 'challenges/command_injection_lab.html', {'error': 'Command rate limit reached. Access throttled.'})
     context = {}
     if request.method == 'POST':
         ip_address = request.POST.get('ip_address', '')

@@ -1,101 +1,103 @@
-Vulnbox: An Interactive Cybersecurity Learning Platform
+# VulnBox: Professional Interactive Cybersecurity Training Platform
 
-Vulnbox is a hands-on web application built with Python and Django, designed to provide a safe and controlled environment for learning ethical hacking. Users can practice exploiting real-world vulnerabilities, track their progress on a personal dashboard, and earn points in a gamified learning system.
+**VulnBox** is a high-end, immersive cybersecurity learning environment built with Python and Django. It is designed to provide a secure, hands-on space for mastering web exploitation, vulnerability research, and modern AI security. 
 
------
+With a glassmorphism "Cyber-Dashboard" aesthetic and an integrated **Gemini AI Assistant**, VulnBox bridges the gap between theoretical knowledge and real-world penetration testing skills.
 
-## ✨ Features
+---
 
-  * **Secure User Authentication**: Complete user registration and login system to protect user data and progress.
-  * **Personalized User Dashboard**: A central hub for users to view their current score and track completed modules.
-  * **Gamified Scoring System**: An engaging points-based system that rewards users for successfully submitting "flags" from challenges.
-  * **Hands-On Hacking Labs**: A wide array of interactive modules covering both classic and modern vulnerabilities.
-  * **Admin Control Panel**: A full-featured admin dashboard for managing users, courses, and site content.
-  * **Modern UI**: A sleek, responsive, cyberpunk-themed interface built with Tailwind CSS.
+## 🚀 Key Features
 
------
+*   **🛡️ Multi-Vector Hacking Labs**: Practical modules covering SQLi, XSS, CSRF, NoSQL, and Command Injection.
+*   **🤖 VulnBot (Gemini AI)**: A context-aware AI assistant powered by Google's **Gemini 2.5 Flash** to provide hints and explain complex security concepts.
+*   **🏆 Gamified Progression**: Real-time scoring system with flag submission and "Lab Mastery" tracking.
+*   **☁️ Scalable Media Storage**: Profile picture management fully integrated with **Cloudinary** for production-grade reliability.
+*   **🖥️ Cyber-Terminal UI**: A premium, responsive interface featuring animated hexagonal frames, glowing glassmorphism panels, and a pulsing activity timeline.
+*   **🔐 Root-Level Security**: Robust authentication and a "Danger Zone" account management system for secure data erasure.
 
-## 📚 Modules & Vulnerabilities Covered
+---
 
-Vulnbox offers a rich curriculum that covers a wide range of security topics, from foundational web exploits to cutting-edge AI vulnerabilities.
+## 📚 Curriculum & Vulnerability Coverage
 
-#### Foundational Web Security
+VulnBox categorizes labs into specialized tracks aligned with CEH (Certified Ethical Hacker) standards:
 
-  * **SQL Injection (`SQLi`)**: Learn how to manipulate database queries to bypass logins and extract sensitive data.
-  * **Brute-Force Attacks**: Practice techniques for systematically guessing credentials to gain unauthorized access.
-  * **Command Injection**: Exploit vulnerabilities to execute arbitrary commands on the server's operating system.
-  * **Cross-Site Request Forgery (`CSRF`)**: Understand how to trick a user's browser into making unintended requests.
-  * **NoSQL Injection**: Explore injection attacks specifically targeting modern NoSQL databases.
+#### 🌐 Web Exploitation (Classic)
+*   **SQL Injection**: Bypass authentication and dump databases.
+*   **Brute-Force**: Master credential spraying and dictionary attacks.
+*   **Command Injection**: Execute OS-level commands through vulnerable inputs.
+*   **Post-Exploitation**: Learn how to pivot and escalate after the initial breach.
 
-#### Advanced & Specialized Topics
+#### 🧠 Artificial Intelligence Security (Modern)
+*   **Prompt Injection**: Trick LLMs into leaking system instructions or secrets.
+*   **Data Poisoning**: Understand how corrupted datasets affect model reliability.
+*   **Model Theft**: Explore the ethics and techniques of reverse-engineering AI properties.
 
-  * **Cryptography**: Discover and exploit common flaws in encryption and hashing implementations.
-  * **Prompt Injection**: A modern attack targeting Large Language Models (LLMs) to make them bypass their instructions.
-  * **Data Poisoning**: Learn how attackers can corrupt the training data of a machine learning model.
-  * **Model Theft**: Explore techniques to reverse-engineer and steal proprietary AI models.
+---
 
------
+## 🛠️ Technology Stack
 
-## 🛠️ Tech Stack
-
-| Category | Technology & Tools |
+| Layer | Technologies |
 | :--- | :--- |
-| **Backend** | Python, Django |
-| **Frontend**| HTML, CSS, JavaScript, Tailwind CSS |
-| **Database**| SQLite (default), PostgreSQL/MySQL compatible |
-| **Authentication**| Django's Built-in Authentication System |
-| **Development**| Git, GitHub, VS Code |
+| **Backend** | Python 3.12, Django 5.x |
+| **Frontend** | Vanilla JS, Tailwind CSS, Particles.js, Lucide Icons |
+| **AI Integration** | Google Gemini API (v1beta/v1) |
+| **Media/Storage** | Cloudinary (CDN), SQLite/PostgreSQL |
+| **Configuration** | Python-Decouple (Environment Variables) |
 
------
+---
 
-## ⚙️ Local Installation and Setup
+## ⚙️ Installation & Production Setup
 
-Follow these steps to get a local copy of Vulnbox up and running.
+### 1. Prerequisites
+- Python 3.10+
+- A Cloudinary account for media storage.
+- A Google AI Studio API key for VulnBot.
 
-1.  **Clone the Repository**
+### 2. Environment Configuration
+Create a `.env` file in the `vulnbox_project/` directory with the following keys:
+```env
+# Security
+SECRET_KEY=your_django_secret_key
+DEBUG=True
 
-    ```bash
-    git clone https://github.com/alan-j-w/Vulnbox.git
-    cd Vulnbox
-    ```
+# Cloudinary Storage
+CLOUDINARY_URL=cloudinary://<api_key>:<api_secret>@<cloud_name>
 
-2.  **Create and Activate a Virtual Environment**
+# Gemini AI Assistant
+GEMINI_API_KEY=your_google_gemini_api_key
+```
 
-    ```bash
-    # On Windows
-    python -m venv venv
-    venv\Scripts\activate
+### 3. Quick Start
+```bash
+# Clone and enter project
+git clone https://github.com/alan-j-w/Vulnbox.git
+cd Vulnbox/vulnbox_project
 
-    # On macOS / Linux
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
+# Install dependencies
+pip install -r requirements.txt
 
-3.  **Install Dependencies**
+# Apply migrations
+python manage.py makemigrations authapp
+python manage.py migrate
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+# Launch Platform
+python manage.py runserver
+```
 
-4.  **Run Migrations and Start the Server**
+---
 
-    ```bash
-    python manage.py migrate
-    python manage.py runserver
-    ```
+## 👨‍💻 Author & Development
 
-    The application will now be running at 👉 `http://127.0.0.1:8000/`
+*   **Alan Joy Wilson**
+*   Full-Stack Django Developer | Cybersecurity Researcher
+*   **GitHub**: [alan-j-w](https://github.com/alan-j-w)
 
------
+---
 
-## 👨‍💻 Author
+## ⚠️ Security Disclaimer
 
-  * **Alan Joy Wilson**
-  * Python Django Developer | Cybersecurity Enthusiast
-  * **GitHub Profile**: [github.com/alan-j-w](https://www.google.com/search?q=https://github.com/alan-j-w)
+VulnBox is strictly for **educational and ethical research purposes**. Never attempt to use the techniques learned here on systems you do not own or have explicit written permission to test. Unauthorized access is illegal and unethical.
 
------
+---
 
-## ⚠️ License
-
-This project is currently for personal and educational use. All rights are reserved by the author. Please get in touch for collaboration or usage permissions.
+&copy; 2026 VulnBox Platform. All Rights Reserved. `v1.2-stable`

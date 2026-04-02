@@ -5,9 +5,6 @@
 
 {% block extra_head %}
 <style>
-    /* --- All your existing styles are perfect and unchanged --- */
-    /* Orbitron + Roboto Mono fallback — served from local CSS, no CDN needed */
-    
     :root {
         --panel-bg: rgba(20, 20, 25, 0.6);
         --border-color: rgba(57, 255, 20, 0.2);
@@ -137,12 +134,10 @@
                         <span class="text-gray-400">Current Score</span>
                         <span class="font-bold text-[var(--accent-green)]">{{ user.score }} PTS</span>
                     </div>
-                    <!-- === START: THIS IS THE FIX === -->
                     <div class="flex justify-between items-center border-b border-gray-700 pb-2">
                         <span class="text-gray-400">Challenges Completed</span>
                         <span class="font-bold text-white">{{ user.completed_challenges|length }}</span>
                     </div>
-                    <!-- === END: THIS IS THE FIX === -->
                     <div class="flex justify-between items-center border-b border-gray-700 pb-2">
                         <span class="text-gray-400">Date Joined</span>
                         <span class="font-bold text-white">{{ user.date_joined|date:"F j, Y" }}</span>
@@ -219,12 +214,10 @@
 </div>
 {% endblock %}
 
-
 {% block extra_js %}
 <script src="{% static 'js/particles.min.js' %}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Modal JS remains the same
         const deleteModal = document.getElementById('deleteModal');
         const deleteBtn = document.getElementById('deleteBtn');
         const cancelBtn = document.getElementById('cancelBtn');

@@ -19,6 +19,8 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 
 # Allowed hosts (comma-separated in .env)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv())
+if not ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ['*']
 
 # ============================================================
 # APPS
@@ -49,6 +51,7 @@ SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -150,6 +153,9 @@ else:
         'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
     }
 
+# Static File Storage (WhiteNoise)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # ============================================================
@@ -180,6 +186,9 @@ if not DEBUG:
 GEMINI_API_KEY = config('GEMINI_API_KEY', default=None)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# --- Rate Limiting (django-ratelimit) ---
+RATELIMIT_ENABLE = True
 
 # ============================================================
 # GOOGLE OAUTH (django-allauth)
