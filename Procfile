@@ -1,1 +1,1 @@
-web: gunicorn --chdir vulnbox_project vulnbox.wsgi
+web: gunicorn --chdir vulnbox_project vulnbox.wsgi:application
