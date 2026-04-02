@@ -1,1 +1,1 @@
-web: gunicorn --chdir vulnbox_project vulnbox.wsgi:application
+web: gunicorn --pythonpath . vulnbox_project.vulnbox.wsgi:application
