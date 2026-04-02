@@ -1,1 +1,1 @@
-web: gunicorn vulnbox.wsgi
+web: gunicorn vulnbox.wsgi:application
