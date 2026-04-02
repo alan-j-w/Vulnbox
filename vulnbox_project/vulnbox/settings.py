@@ -203,10 +203,8 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 # Allauth settings (Modern Format)
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_LOGIN_METHODS = {'email'}
-ACCOUNT_SIGNUP_FIELDS = ['email', 'username', 'password']
+ACCOUNT_SIGNUP_FIELDS = ['email', 'username', 'password1']
 ACCOUNT_EMAIL_VERIFICATION = 'none' # Set to 'mandatory' if you add email backend
 SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_ADAPTER = 'authapp.adapters.CustomSocialAccountAdapter'
