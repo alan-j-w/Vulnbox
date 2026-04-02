@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const data = await response.json();
-            addMessage(data.answer, 'ai');
+            addMessage(data.reply || data.error || 'No response received.', 'ai');
 
         } catch (error) {
             chatMessages.removeChild(chatMessages.lastChild);

@@ -8,7 +8,7 @@ from django.conf import settings as django_settings
 from django_ratelimit.decorators import ratelimit
 
 GEMINI_API_KEY = getattr(django_settings, 'GEMINI_API_KEY', None)
-GEMINI_API_URL = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}' if GEMINI_API_KEY else None
+GEMINI_API_URL = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}' if GEMINI_API_KEY else None
 
 @login_required
 def prompt_injection_lab(request):

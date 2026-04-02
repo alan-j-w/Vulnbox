@@ -8,6 +8,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('authapp.urls', namespace='authapp')),
+    path('accounts/', include('allauth.urls')),  # Google OAuth routes
     path('', include('core.urls', namespace='core')),
 ]
 

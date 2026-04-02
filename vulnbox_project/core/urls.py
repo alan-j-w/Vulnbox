@@ -21,7 +21,7 @@ from .views import (
     # Exams
     exam_list_view, start_exam_view, submit_exam_view, verify_certificate_view,
     # Static Pages
-    privacy_policy, disclaimer, tos, aup, ethics,
+    privacy_policy, disclaimer, tos, aup, ethics, about_developer,
     # AI
     ask_ai_view,
     # Errors
@@ -87,6 +87,7 @@ urlpatterns = [
     path('tos/', tos, name='tos'),
     path('aup/', aup, name='aup'),
     path('ethics/', ethics, name='ethics'),
+    path('about/', about_developer, name='about_developer'),
 
     # AI Assistant
     path('ask_ai/', ask_ai_view, name='ask_ai'),

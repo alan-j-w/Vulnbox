@@ -30,11 +30,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Local Apps
     'core',
     'authapp',
     'curriculum',
     'certification',
+    # Django Allauth
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'cloudinary',
+    'cloudinary_storage',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -44,6 +55,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
+]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 ROOT_URLCONF = 'vulnbox.urls'
@@ -97,6 +114,44 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Cloudinary Configuration
+CLOUDINARY_URL = config('CLOUDINARY_URL', default=None)
+
+if CLOUDINARY_URL:
+    # Option 1: Let the cloudinary library pick it up from the environment
+    import os
+    os.environ["CLOUDINARY_URL"] = CLOUDINARY_URL
+    
+    # Option 2: Manually populate CLOUDINARY_STORAGE for django-cloudinary-storage
+    import re
+    try:
+        # Regex to parse cloudinary://api_key:api_secret@cloud_name
+        pattern = r"cloudinary://(?P<api_key>[^:]+):(?P<api_secret>[^@]+)@(?P<cloud_name>.+)"
+        match = re.match(pattern, CLOUDINARY_URL)
+        if match:
+            CLOUDINARY_STORAGE = {
+                'CLOUD_NAME': match.group('cloud_name'),
+                'API_KEY': match.group('api_key'),
+                'API_SECRET': match.group('api_secret'),
+            }
+        else:
+            # Fallback if regex fails but URL exists
+            CLOUDINARY_STORAGE = {
+                'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
+                'API_KEY': config('CLOUDINARY_API_KEY', default=''),
+                'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
+            }
+    except Exception:
+        CLOUDINARY_STORAGE = {}
+else:
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
+        'API_KEY': config('CLOUDINARY_API_KEY', default=''),
+        'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
+    }
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 # ============================================================
 # SESSION
 # ============================================================
@@ -125,3 +180,25 @@ if not DEBUG:
 GEMINI_API_KEY = config('GEMINI_API_KEY', default=None)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ============================================================
+# GOOGLE OAUTH (django-allauth)
+# ============================================================
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+        # Credentials are managed via Django Admin:
+        # /admin/socialaccount/socialapp/
+    }
+}
+
+# Allauth settings
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # Set to 'mandatory' if you add email backend
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_ADAPTER = 'authapp.adapters.CustomSocialAccountAdapter'
+LOGIN_REDIRECT_URL = 'core:dashboard'
+ACCOUNT_LOGOUT_REDIRECT_URL = 'core:home'

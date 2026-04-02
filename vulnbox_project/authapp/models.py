@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from core.models import Badge
+from cloudinary.models import CloudinaryField
 
 class CustomUser(AbstractUser):
     # Core authentication fields
@@ -10,8 +11,9 @@ class CustomUser(AbstractUser):
 
     # Gamification and profile fields
     score = models.IntegerField(default=0)
-    profile_picture = models.ImageField(
-        upload_to='profile_pics/',
+    profile_picture = CloudinaryField(
+        'image',
+        folder='profile_pics/',
         default='profile_pics/default.png'
     )
     completed_challenges = models.JSONField(default=list)

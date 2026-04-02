@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Error | VulnBox</title>
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+    <style>
+        body {
+            background-color: #000000;
+            background-image:
+                linear-gradient(rgba(255, 0, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.05) 1px, transparent 1px);
+            background-size: 3rem 3rem;
+            font-family: 'Roboto Mono', monospace;
+        }
+        .cursor::after { content: '_'; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        .error-glow { box-shadow: 0 0 30px rgba(255, 0, 0, 0.15), inset 0 0 30px rgba(0,0,0,0.5); }
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+            60% { transform: translate(-1px, 1px); }
+        }
+        .glitch { animation: glitch 0.4s ease infinite; }
+    </style>
+</head>
+<body class="h-full flex flex-col text-green-400 bg-black">
+
+    <header class="py-4 px-6 bg-black/80 border-b-2 border-red-500/50 backdrop-blur-sm sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold tracking-widest cursor text-red-400">VULNBOX</a>
+            <nav class="flex items-center space-x-6">
+                <a href="{% url 'core:home' %}" class="text-green-400 hover:text-white transition-colors duration-300">Home</a>
+                <a href="{% url 'authapp:login' %}" class="text-green-400 hover:text-white transition-colors duration-300">Login</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-black/70 p-8 border-2 border-red-500/50 rounded-xl backdrop-blur-sm error-glow text-center">
+
+            <!-- Error Icon -->
+            <div class="text-6xl mb-4 glitch">⚠️</div>
+
+            <!-- Title -->
+            <h2 class="text-2xl font-bold text-red-400 mb-2 tracking-widest">AUTH FAILURE</h2>
+            <p class="text-red-400/60 text-sm font-mono mb-6">
+                ERROR: Third-party authentication failed.
+            </p>
+
+            <div class="border-t border-red-700/30 mb-6"></div>
+
+            <!-- Info -->
+            <div class="bg-red-500/5 border border-red-500/20 rounded-lg p-4 mb-6 text-sm text-left text-red-400/70">
+                <p class="mb-2">Possible reasons:</p>
+                <ul class="list-disc list-inside space-y-1 text-red-400/50">
+                    <li>Google account access was denied</li>
+                    <li>Session expired — try again</li>
+                    <li>Account conflict detected</li>
+                </ul>
+            </div>
+
+            <!-- Actions -->
+            <a href="{% url 'authapp:login' %}"
+               class="block w-full bg-green-400 text-black font-bold py-2 px-4 rounded-lg hover:bg-green-300 transition-colors mb-3 text-center">
+                > Try Again
+            </a>
+            <a href="{% url 'authapp:signup' %}"
+               class="block text-center text-sm text-green-400/50 hover:text-green-400 transition-colors">
+                Register with email instead
+            </a>
+
+        </div>
+    </main>
+
+    <footer class="text-center p-6 text-xs text-green-400/30 font-mono">
+        <p class="mb-2">🚀 Built by Alan Joy Wilson | <a href="https://github.com/alan-j-w/Vulnbox" class="text-cyan-400 hover:underline">View Source</a></p>
+        <p>⚔️ Learn. Hack. Repeat. | VulnBox CTF © {% now "Y" %} <span class="ml-2 opacity-30">v1.0</span></p>
+    </footer>
+
+</body>
+</html>

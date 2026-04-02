@@ -51,8 +51,13 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="text-center p-4 text-xs text-green-400/50">
-        ⚔️ Learn. Hack. Repeat. | VulnBox CTF © {% now "Y" %}
+    <footer class="text-center p-6 text-xs text-green-400/50 font-mono">
+        <div class="flex justify-center space-x-6 mb-4">
+            <a href="{% url 'core:home' %}" class="hover:text-white transition-colors duration-300">Home</a>
+            <a href="{% url 'core:about_developer' %}" class="hover:text-white transition-colors duration-300">About Developer</a>
+        </div>
+        <p class="mb-2">🚀 Built by Alan Joy Wilson | <a href="https://github.com/alan-j-w/Vulnbox" class="text-cyan-400 hover:underline">View Source</a></p>
+        <p>⚔️ Learn. Hack. Repeat. | VulnBox CTF © {% now "Y" %} <span class="ml-2 opacity-50">v1.0</span></p>
     </footer>
 
 </body>
