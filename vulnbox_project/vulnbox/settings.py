@@ -211,3 +211,6 @@ SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_ADAPTER = 'authapp.adapters.CustomSocialAccountAdapter'
 LOGIN_REDIRECT_URL = 'core:dashboard'
 ACCOUNT_LOGOUT_REDIRECT_URL = 'core:home'
+
+# Silence allauth W001 warning since email login with required username is intentional
+SILENCED_SYSTEM_CHECKS = ['account.W001']
