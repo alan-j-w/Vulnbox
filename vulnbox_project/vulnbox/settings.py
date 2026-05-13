@@ -148,10 +148,18 @@ if CLOUDINARY_URL:
         CLOUDINARY_STORAGE = {}
 else:
     CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
-        'API_KEY': config('CLOUDINARY_API_KEY', default=''),
-        'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
+        'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default='dummy_cloud'),
+        'API_KEY': config('CLOUDINARY_API_KEY', default='dummy_key'),
+        'API_SECRET': config('CLOUDINARY_API_SECRET', default='dummy_secret'),
     }
+
+# Ensure the base cloudinary library is also configured to prevent ValueError on render
+import cloudinary
+cloudinary.config(
+    cloud_name=CLOUDINARY_STORAGE.get('CLOUD_NAME'),
+    api_key=CLOUDINARY_STORAGE.get('API_KEY'),
+    api_secret=CLOUDINARY_STORAGE.get('API_SECRET')
+)
 
 # Static File Storage (WhiteNoise)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -178,6 +186,12 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
+# Required for Heroku/Render/Railway to know the request is secure
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Optional: If you run into CSRF origin errors on production, uncomment and add your domain:
+# CSRF_TRUSTED_ORIGINS = ['https://your-production-domain.com']
 
 # ============================================================
 # AI ASSISTANT — Gemini API KEY

@@ -6,20 +6,22 @@ from django.contrib import messages
 from django.template import Template, Context, TemplateSyntaxError
 from django_ratelimit.decorators import ratelimit
 
+from curriculum.models import CourseLab, LabCompletion
+
 # Flag Database
 FLAG_DATABASE = {
-    'FLAG{auth_bypass_achieved_d9a3}':    {'name': 'Login Bypass',       'points': 10},
-    'FLAG{sql_injection_success_e4b1}':   {'name': 'SQL Injection',       'points': 15},
-    'flag{w3ak_p4ssw0rds_l34d_t0_d00m}': {'name': 'Brute-Force',         'points': 20},
-    'flag{caesars_salad_is_not_encrypted}': {'name': 'Cryptography',      'points': 10},
-    'flag{xss_sCripT_k1dd1e_alert}':      {'name': 'XSS',                'points': 25},
-    'flag{csrf_f0rg3d_r3qu3st_succ3ss}':  {'name': 'CSRF',               'points': 20},
-    'flag{n0sql_1nj3ct10n_byp4ss}':       {'name': 'NoSQL Injection',     'points': 30},
-    'flag{t3mpl4t3s_c4n_b3_tr41t0rs}':    {'name': 'SSTI',               'points': 35},
-    'flag{sh3ll_c0mm4nd_ma5t3r}':         {'name': 'Command Injection',   'points': 40},
-    'flag{pr0mpt_h4ck_m45t3r}':           {'name': 'Prompt Injection',    'points': 50},
-    'flag{tr41n1ng_d4t4_c0rrupt3d}':      {'name': 'Data Poisoning',      'points': 60},
-    'flag{m0d3l_p4r4m3t3r_3xtr4ct3d}':   {'name': 'Model Theft',         'points': 65},
+    'FLAG{auth_bypass_achieved_d9a3}':    {'name': 'Login Bypass',       'points': 10, 'slug': 'login-bypass'},
+    'FLAG{sql_injection_success_e4b1}':   {'name': 'SQL Injection',       'points': 15, 'slug': 'sql-injection-union'},
+    'flag{w3ak_p4ssw0rds_l34d_t0_d00m}': {'name': 'Brute-Force',         'points': 20, 'slug': 'brute-force'},
+    'flag{caesars_salad_is_not_encrypted}': {'name': 'Cryptography',      'points': 10, 'slug': 'cryptography-caesar'},
+    'flag{xss_sCripT_k1dd1e_alert}':      {'name': 'XSS',                'points': 25, 'slug': 'stored-xss'},
+    'flag{csrf_f0rg3d_r3qu3st_succ3ss}':  {'name': 'CSRF',               'points': 20, 'slug': 'csrf'},
+    'flag{n0sql_1nj3ct10n_byp4ss}':       {'name': 'NoSQL Injection',     'points': 30, 'slug': 'nosql-injection'},
+    'flag{t3mpl4t3s_c4n_b3_tr41t0rs}':    {'name': 'SSTI',               'points': 35, 'slug': 'ssti'},
+    'flag{sh3ll_c0mm4nd_ma5t3r}':         {'name': 'Command Injection',   'points': 40, 'slug': 'command-injection'},
+    'flag{pr0mpt_h4ck_m45t3r}':           {'name': 'Prompt Injection',    'points': 50, 'slug': 'ai-prompt-injection'},
+    'flag{tr41n1ng_d4t4_c0rrupt3d}':      {'name': 'Data Poisoning',      'points': 60, 'slug': 'ml-data-poisoning'},
+    'flag{m0d3l_p4r4m3t3r_3xtr4ct3d}':   {'name': 'Model Theft',         'points': 65, 'slug': 'ml-model-theft'},
 }
 
 @ratelimit(key='user', rate='15/m', block=False)
@@ -37,6 +39,17 @@ def submit_flag_view(request):
                 request.user.score += challenge['points']
                 request.user.completed_challenges.append(challenge_name)
                 request.user.save()
+                
+                lab_slug = challenge.get('slug')
+                if lab_slug:
+                    course_lab = CourseLab.objects.filter(slug=lab_slug).first()
+                    if course_lab:
+                        LabCompletion.objects.get_or_create(
+                            user=request.user,
+                            lab=course_lab,
+                            defaults={'score_earned': challenge['points']}
+                        )
+                
                 messages.success(request, f"Correct! You earned {challenge['points']} points for the '{challenge_name}' challenge.")
             else:
                 messages.error(request, 'You have already submitted the flag for this challenge.')

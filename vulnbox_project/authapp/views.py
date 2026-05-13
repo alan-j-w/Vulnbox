@@ -16,7 +16,7 @@ def signup_view(request):
         if form.is_valid():
             if request.POST.get('privacy_policy') == 'on':
                 user = form.save()
-                login(request, user)
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 return redirect('core:dashboard')
             else:
                 form.add_error(None, "You must agree to the Privacy Policy to create an account.")
