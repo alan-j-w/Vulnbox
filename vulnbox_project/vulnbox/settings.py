@@ -190,6 +190,12 @@ if not DEBUG:
 # Required for Heroku/Render/Railway to know the request is secure
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+# CSRF & Session Hardening for Mobile WebViews (LinkedIn, etc.)
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_HTTPONLY = False  # Allow JS to read CSRF token if needed, but safer to keep Lax
+SESSION_COOKIE_HTTPONLY = True
+
 # Optional: If you run into CSRF origin errors on production, uncomment and add your domain:
 # CSRF_TRUSTED_ORIGINS = ['https://your-production-domain.com']
 
@@ -223,6 +229,9 @@ ACCOUNT_SIGNUP_FIELDS = ['email', 'username', 'password1']
 ACCOUNT_EMAIL_VERIFICATION = 'none' # Set to 'mandatory' if you add email backend
 SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_ADAPTER = 'authapp.adapters.CustomSocialAccountAdapter'
+SOCIALACCOUNT_LOGIN_ON_GET = True  # FIX: Skips "Continue" page, direct redirect (Better for WebViews)
+SOCIALACCOUNT_QUERY_EMAIL = True
+SOCIALACCOUNT_STORE_TOKENS = True
 LOGIN_REDIRECT_URL = 'core:dashboard'
 ACCOUNT_LOGOUT_REDIRECT_URL = 'core:home'
 
