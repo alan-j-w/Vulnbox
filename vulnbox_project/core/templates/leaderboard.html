@@ -76,7 +76,15 @@
                             {% if forloop.counter == 2 %}rank-2{% endif %}
                             {% if forloop.counter == 3 %}rank-3{% endif %}
                         ">
-                            #{{ forloop.counter }}
+                            {% if forloop.counter == 1 %}
+                                <i data-lucide="trophy" class="inline-block w-6 h-6"></i>
+                            {% elif forloop.counter == 2 %}
+                                <i data-lucide="medal" class="inline-block w-5 h-5 opacity-80"></i>
+                            {% elif forloop.counter == 3 %}
+                                <i data-lucide="award" class="inline-block w-5 h-5 opacity-70"></i>
+                            {% else %}
+                                #{{ forloop.counter }}
+                            {% endif %}
                         </td>
                         <!-- === START: UPDATED PLAYER CELL === -->
                         <td>
