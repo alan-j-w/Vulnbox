@@ -85,17 +85,33 @@
 <script>
     (function() {
         const ua = navigator.userAgent || navigator.vendor || window.opera;
+        
+        // Comprehensive check for in-app browsers
         const isWebview = (
             (ua.indexOf('FBAN') > -1) || (ua.indexOf('FBAV') > -1) || 
             (ua.indexOf('Instagram') > -1) || (ua.indexOf('LinkedInApp') > -1) ||
             (ua.indexOf('Messenger') > -1) || (ua.indexOf('Pinterest') > -1) ||
-            (ua.indexOf('Twitter') > -1) || (ua.indexOf('Snapchat') > -1)
+            (ua.indexOf('Twitter') > -1) || (ua.indexOf('Snapchat') > -1) ||
+            (ua.indexOf('wv') > -1) || // Common Android Webview indicator
+            (ua.indexOf('LinkedIn') > -1) || // Generic LinkedIn
+            (/[Gg]oogle[Cc]hrome\/[.0-9]* Mobile (?!Safari)/.test(ua)) // Some Android Webviews
         );
         
         if (isWebview) {
-            document.getElementById('webview-warning').classList.remove('hidden');
+            const warning = document.getElementById('webview-warning');
+            if (warning) {
+                warning.classList.remove('hidden');
+                // Also disable the Google button to prevent the error
+                const googleBtn = document.querySelector('a[href*="provider_login_url"]');
+                if (googleBtn) {
+                    googleBtn.style.opacity = '0.5';
+                    googleBtn.style.pointerEvents = 'none';
+                    googleBtn.innerHTML = 'Google Login Restricted in App';
+                }
+            }
         }
     })();
 </script>
 {% endblock %}
+
 
