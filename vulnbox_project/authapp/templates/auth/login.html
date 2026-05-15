@@ -61,4 +61,41 @@
         </p>
     </form>
 </div>
+
+<!-- Webview Detection & Warning -->
+<div id="webview-warning" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+    <div class="max-w-sm w-full bg-black border-2 border-yellow-500/50 p-6 rounded-xl text-center shadow-[0_0_30px_rgba(234,179,8,0.2)]">
+        <div class="mb-4 flex justify-center">
+            <div class="p-3 bg-yellow-500/20 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+        </div>
+        <h3 class="text-xl font-bold text-yellow-500 mb-2 uppercase tracking-widest">In-App Browser Detected</h3>
+        <p class="text-gray-400 text-sm mb-6 leading-relaxed">
+            Google Sign-In is restricted inside apps like LinkedIn. To continue, tap the <span class="text-white font-bold">three dots (...)</span> or <span class="text-white font-bold">share icon</span> and select <span class="text-green-400 font-bold">"Open in Browser"</span>.
+        </p>
+        <button onclick="document.getElementById('webview-warning').classList.add('hidden')" class="w-full py-2 border border-yellow-500/50 text-yellow-500 rounded-lg hover:bg-yellow-500/10 transition-all text-xs uppercase tracking-widest">
+            I understand, stay here
+        </button>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const ua = navigator.userAgent || navigator.vendor || window.opera;
+        const isWebview = (
+            (ua.indexOf('FBAN') > -1) || (ua.indexOf('FBAV') > -1) || 
+            (ua.indexOf('Instagram') > -1) || (ua.indexOf('LinkedInApp') > -1) ||
+            (ua.indexOf('Messenger') > -1) || (ua.indexOf('Pinterest') > -1) ||
+            (ua.indexOf('Twitter') > -1) || (ua.indexOf('Snapchat') > -1)
+        );
+        
+        if (isWebview) {
+            document.getElementById('webview-warning').classList.remove('hidden');
+        }
+    })();
+</script>
 {% endblock %}
+
