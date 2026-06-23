@@ -1,0 +1,181 @@
+<!-- Cyberpunk Transition Preloader and Server Status Monitor -->
+<style>
+    /* Custom Keyframes & Utility classes for the preloader */
+    @keyframes cyber-shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(300%); }
+    }
+    
+    .animate-cyber-shimmer {
+        animation: cyber-shimmer 2s infinite linear;
+    }
+    
+    .preloader-glow {
+        box-shadow: 0 0 15px rgba(57, 255, 20, 0.4), 0 0 30px rgba(57, 255, 20, 0.2);
+    }
+    
+    .status-pulse-green {
+        box-shadow: 0 0 8px #22c55e, 0 0 15px rgba(34, 197, 94, 0.5);
+    }
+
+    .status-pulse-orange {
+        box-shadow: 0 0 8px #f97316, 0 0 15px rgba(249, 115, 22, 0.5);
+    }
+
+    .status-pulse-red {
+        box-shadow: 0 0 8px #ef4444, 0 0 15px rgba(239, 68, 68, 0.5);
+    }
+</style>
+
+<!-- Full-screen Preloader Overlay -->
+<div id="global-preloader" class="fixed inset-0 bg-[#0A0A0A] z-[99999] flex flex-col items-center justify-center transition-opacity duration-300 ease-in-out">
+    <!-- Cyberpunk loading grid / card layout -->
+    <div class="relative w-80 max-w-sm flex flex-col items-center text-center p-6 border-2 border-green-500/30 rounded-xl bg-black/80 backdrop-blur-md shadow-[0_0_30px_rgba(0,255,0,0.1)]">
+        <!-- Corner Accents -->
+        <div class="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-green-500"></div>
+        <div class="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-green-500"></div>
+        <div class="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-green-500"></div>
+        <div class="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-green-500"></div>
+
+        <!-- Pulse Logo -->
+        <div class="w-16 h-16 rounded-xl bg-green-500/5 border border-green-500/40 flex items-center justify-center mb-5 relative animate-pulse shadow-[0_0_15px_rgba(57,255,20,0.2)]">
+            <span class="text-3xl font-black text-green-400 font-mono tracking-widest text-glow">V</span>
+        </div>
+
+        <div class="text-[11px] font-black uppercase text-green-400 tracking-[0.25em] font-mono mb-4 text-glow" id="preloader-title">
+            Establishing Secure Link...
+        </div>
+
+        <!-- Progress Bar Container -->
+        <div class="w-full bg-gray-950 border border-green-500/20 rounded-full h-1.5 mb-2 overflow-hidden relative">
+            <div id="preloader-progress" class="bg-green-500 h-full w-1/3 rounded-full animate-cyber-shimmer shadow-[0_0_10px_#39ff14]"></div>
+        </div>
+
+        <!-- Cold Start Warning Alert Box (Hidden by default, shown if delay > 2.5s) -->
+        <div id="preloader-status-container" class="mt-4 hidden p-3 rounded-lg border border-yellow-500/30 bg-yellow-500/5 text-[11px] text-yellow-500 font-mono leading-relaxed text-left transition-all duration-300">
+            <div class="flex items-start gap-2">
+                <i data-lucide="alert-triangle" class="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5 animate-bounce"></i>
+                <div>
+                    <span class="font-bold uppercase tracking-wider block mb-1">Server Cold Start Warning</span>
+                    VulnBox is hosted on Render's free tier. The server spins down after 15 minutes of inactivity.
+                    <span class="block mt-1.5 text-gray-300 font-semibold">It is currently waking up the backend container, which takes 20-40 seconds. Please do not close or refresh this page!</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 text-[10px] text-green-500/40 font-mono uppercase tracking-widest flex items-center gap-1.5" id="preloader-subtext">
+            <span class="w-1.5 h-1.5 rounded-full bg-green-500/60 animate-ping"></span>
+            SYS_REF: CONN_ESTABLISH
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const preloader = document.getElementById('global-preloader');
+        const progress = document.getElementById('preloader-progress');
+        const titleText = document.getElementById('preloader-title');
+        const statusContainer = document.getElementById('preloader-status-container');
+        let coldStartTimer = null;
+
+        // Hide preloader helper
+        function hidePreloader() {
+            if (!preloader) return;
+            preloader.classList.add('opacity-0');
+            preloader.style.pointerEvents = 'none';
+            if (coldStartTimer) {
+                clearTimeout(coldStartTimer);
+                coldStartTimer = null;
+            }
+            // After transition finishes, hide fully
+            setTimeout(() => {
+                if (preloader.classList.contains('opacity-0')) {
+                    preloader.classList.add('hidden');
+                }
+            }, 300);
+        }
+
+        // Show preloader helper
+        function showPreloader(isFormSubmit = false) {
+            if (!preloader) return;
+            
+            // Reset state
+            statusContainer.classList.add('hidden');
+            titleText.textContent = isFormSubmit ? 'Processing Submission...' : 'Loading Secure Node...';
+            
+            // Show element
+            preloader.classList.remove('hidden');
+            // Force reflow
+            preloader.offsetHeight;
+            preloader.classList.remove('opacity-0');
+            preloader.style.pointerEvents = 'auto';
+
+            // Set a timer for 2.5 seconds. If page hasn't transitioned, show the cold start alert.
+            if (coldStartTimer) clearTimeout(coldStartTimer);
+            coldStartTimer = setTimeout(() => {
+                titleText.textContent = 'SYS_PING: CONTAINER_SLEEP';
+                statusContainer.classList.remove('hidden');
+                
+                // Re-initialize Lucide icons in case the warning alert is shown
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons({
+                        attrs: {
+                            class: 'lucide'
+                        },
+                        nameAttr: 'data-lucide'
+                    });
+                }
+            }, 2500);
+        }
+
+        // --- PAGE INITIAL LOAD / HIDING ---
+        // Hide as soon as DOM is interactive to feel fast, then ensure it's hidden on complete load
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            hidePreloader();
+        } else {
+            document.addEventListener('DOMContentLoaded', hidePreloader);
+            window.addEventListener('load', hidePreloader);
+        }
+
+        // Handle Back/Forward cache (bcache)
+        window.addEventListener('pageshow', function(event) {
+            hidePreloader();
+        });
+
+        // --- PAGE TRANSITION INTERCEPTOR ---
+        document.addEventListener('click', function(e) {
+            // Find closest anchor tag
+            const anchor = e.target.closest('a');
+            if (!anchor) return;
+
+            const href = anchor.getAttribute('href');
+            
+            // Skip conditions:
+            // 1. Modifier keys (Ctrl, Shift, Command, Alt) to open in new tab
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+            // 2. Default prevented already
+            if (e.defaultPrevented) return;
+            // 3. No href or hash anchors
+            if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+            // 4. External links or targets
+            if (anchor.target === '_blank') return;
+            if (href.startsWith('http') && !href.startsWith(window.location.origin)) return;
+            // 5. Special links (mailto, tel, download)
+            if (href.startsWith('mailto:') || href.startsWith('tel:') || anchor.hasAttribute('download')) return;
+            // 6. Explicitly skipped links
+            if (anchor.classList.contains('no-loader') || anchor.closest('.no-loader')) return;
+
+            // Show preloader
+            showPreloader(false);
+        });
+
+        // Intercept form submissions (e.g. login, signup, flag submit)
+        document.addEventListener('submit', function(e) {
+            const form = e.target;
+            if (form.target === '_blank' || form.classList.contains('no-loader')) return;
+            
+            showPreloader(true);
+        });
+
+    })();
+</script>

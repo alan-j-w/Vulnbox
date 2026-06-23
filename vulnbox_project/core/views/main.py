@@ -91,3 +91,4 @@ def leaderboard_view(request):
     users = CustomUser.objects.filter(is_superuser=False).order_by('-score')[:50]
     context = { 'users': users }
     return render(request, 'leaderboard.html', context)
+
