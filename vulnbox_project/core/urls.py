@@ -2,7 +2,7 @@ from django.urls import path
 from django.views.generic import TemplateView
 from .views import (
     # Main
-    home, dashboard, profile_view, delete_account_view, leaderboard_view,
+    home, dashboard, profile_view, delete_account_view, leaderboard_view, health_check,
     # Labs
     submit_flag_view,
     course_sql, login_bypass, sql_injection,
@@ -31,6 +31,7 @@ from .views import (
 app_name = 'core'
 
 urlpatterns = [
+    path('health/', health_check, name='health_check'),
     path('', home, name='home'),
     path('dashboard/', dashboard, name='dashboard'),
     path('leaderboard/', leaderboard_view, name='leaderboard'),

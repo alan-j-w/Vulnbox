@@ -1,10 +1,14 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib import messages
 from authapp.models import CustomUser
 from authapp.forms import ProfilePictureForm
 from curriculum.models import Module, LabCompletion
+
+def health_check(request):
+    return HttpResponse("OK", status=200)
 
 def home(request):
     return render(request, 'home.html')
